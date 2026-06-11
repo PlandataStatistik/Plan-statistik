@@ -1,0 +1,1456 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Forslag til lokalplaner</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.4.0/ol.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" />
+
+  <style>
+    :root {
+      --primaer:#2C4B39;
+      --bladgroen:#536152;
+      --blaagroen:#95A396;
+      --lysegroen:#A6B29A;
+      --lysebrun:#E0D8CF;
+      --lysegul:#E2CF83;
+      --sort:#111111;
+      --hvid:#FFFFFF;
+      --bg:#F5F4F1;
+      --panel:#FFFFFF;
+      --kant:#D8D2CA;
+    }
+
+    * { box-sizing:border-box; }
+    html, body { margin:0; padding:0; min-height:100%; font-family:"Segoe UI", Arial, sans-serif; color:var(--sort); background:var(--bg); }
+    header { background:var(--primaer); color:var(--hvid); padding:22px 28px; }
+    header h1 { margin:0 0 6px 0; font-size:30px; font-weight:750; letter-spacing:-0.2px; }
+    header p { max-width:1160px; margin:0; line-height:1.45; font-size:15px; }
+
+    .layout { display:grid; grid-template-columns:365px minmax(0, 1fr); gap:18px; padding:18px; min-height:calc(100vh - 100px); }
+    aside { min-width:0; }
+    main { min-width:0; display:grid; grid-template-columns:minmax(0, 1.15fr) minmax(420px, .85fr); grid-template-rows:minmax(560px, calc(100vh - 140px)); gap:18px; align-items:stretch; }
+
+    .info-box, .filter-box, .kpi, .table-card { background:var(--panel); border:1px solid var(--kant); border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,0.05); }
+    .info-box { background:var(--primaer); color:white; padding:16px; margin-bottom:14px; }
+    .info-box h2 { margin:0 0 8px 0; font-size:21px; }
+    .info-box p { margin:0; line-height:1.45; font-size:14px; }
+
+    .kpi-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; margin-bottom:14px; }
+    .kpi { padding:12px; }
+    .kpi strong { display:block; color:var(--primaer); font-size:24px; line-height:1.1; }
+    .kpi span { display:block; color:var(--bladgroen); font-size:12px; margin-top:4px; }
+
+    .filter-box { padding:14px; margin-bottom:14px; overflow-wrap:anywhere; }
+    .filter-title { display:block; font-weight:700; color:var(--primaer); margin-bottom:8px; }
+    .small-note { color:var(--bladgroen); font-size:12px; line-height:1.35; margin-top:8px; }
+    input[type="search"], select { width:100%; border:1px solid var(--blaagroen); border-radius:10px; padding:9px 10px; font:14px "Segoe UI", Arial, sans-serif; background:white; }
+    select[multiple] { min-height:112px; }
+    #hearingFilter { min-height:64px; height:64px; }
+    .native-multi-source { display:none; }
+    .multi-dropdown { position:relative; width:100%; }
+    .multi-dropdown-button {
+      width:100%;
+      text-align:left;
+      background:white;
+      color:var(--sort);
+      border:1px solid var(--blaagroen);
+      border-radius:10px;
+      padding:9px 38px 9px 10px;
+      font-weight:500;
+      position:relative;
+    }
+    .multi-dropdown-button::after {
+      content:"▾";
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--primaer);
+      font-size:13px;
+    }
+    .multi-dropdown-button[aria-expanded="true"]::after { content:"▴"; }
+    .multi-dropdown-menu {
+      position:absolute;
+      z-index:1200;
+      top:calc(100% + 4px);
+      left:0;
+      right:0;
+      max-height:300px;
+      overflow:hidden;
+      background:white;
+      border:1px solid var(--kant);
+      border-radius:12px;
+      box-shadow:0 8px 22px rgba(0,0,0,0.16);
+      padding:8px;
+    }
+    .multi-dropdown-search {
+      width:100%;
+      border:1px solid var(--blaagroen);
+      border-radius:9px;
+      padding:8px 9px;
+      font:13px "Segoe UI", Arial, sans-serif;
+      margin-bottom:7px;
+    }
+    .multi-dropdown-options {
+      max-height:238px;
+      overflow:auto;
+      padding-right:2px;
+    }
+    .multi-dropdown-empty {
+      padding:8px 7px;
+      font-size:13px;
+      color:var(--bladgroen);
+    }
+    .multi-dropdown-option {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 7px;
+      border-radius:8px;
+      font-size:13px;
+      color:var(--sort);
+      cursor:pointer;
+    }
+    .multi-dropdown-option:hover { background:#F3F1ED; }
+    .multi-dropdown-option input { margin:0; accent-color:var(--primaer); }
+    .button-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+    button { border:0; border-radius:9px; padding:8px 10px; background:var(--lysegul); color:var(--sort); cursor:pointer; font-family:"Segoe UI", Arial, sans-serif; font-size:13px; font-weight:650; }
+    button.secondary { background:var(--lysebrun); }
+    button.primary { background:var(--primaer); color:white; }
+
+    .status-line { padding:10px 12px; border-radius:10px; background:#FBFAF8; border:1px solid var(--kant); color:var(--bladgroen); font-size:13px; line-height:1.4; margin-top:10px; }
+    .status-line.error { background:#FFF2F2; color:#7C1F1F; border-color:#E0B6B6; }
+    .status-line.ok { background:#F1F7F1; color:var(--primaer); border-color:var(--lysegroen); }
+    .loader { display:inline-block; width:12px; height:12px; border:2px solid var(--lysebrun); border-top-color:var(--primaer); border-radius:50%; animation:spin .8s linear infinite; vertical-align:-2px; margin-right:6px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .map-card { position:relative; min-width:0; min-height:560px; }
+    #map { width:100%; height:100%; min-height:560px; border-radius:14px; border:1px solid var(--kant); overflow:hidden; background:#DFE6DF; }
+    .map-actions { position:absolute; top:12px; left:52px; z-index:30; display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-start; }
+    .map-actions .base-active { background:var(--primaer); color:white; }
+    .map-actions button { box-shadow:0 2px 8px rgba(0,0,0,0.18); }
+    .table-card { padding:14px; overflow:hidden; min-width:0; min-height:560px; display:flex; flex-direction:column; }
+    .table-scroll { width:100%; flex:1 1 auto; overflow:auto; padding-bottom:8px; }
+    .table-scroll .dataTables_wrapper { min-width:1220px; overflow:visible; }
+    .table-card h2 { color:var(--primaer); font-size:20px; margin:0; }
+    .table-header { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; }
+    .table-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    #featureTable { width:1220px !important; min-width:1220px; table-layout:auto; }
+    #featureTable th, #featureTable td { white-space:nowrap; }
+    body.table-expanded .table-scroll .dataTables_wrapper { min-width:100%; }
+    body.table-expanded #featureTable { width:100% !important; min-width:1220px; }
+    body.table-expanded .layout { grid-template-columns:1fr; }
+    body.table-expanded aside, body.table-expanded .map-card { display:none; }
+    body.table-expanded main { grid-template-columns:1fr; grid-template-rows:calc(100vh - 140px); }
+    body.table-expanded .table-card { min-height:calc(100vh - 140px); }
+    body.map-expanded .layout { grid-template-columns:1fr; }
+    body.map-expanded aside, body.map-expanded .table-card { display:none; }
+    body.map-expanded main { grid-template-columns:1fr; grid-template-rows:calc(100vh - 140px); }
+    body.map-expanded .map-card, body.map-expanded #map { min-height:calc(100vh - 140px); }
+    table.dataTable { width:100% !important; font-size:13px; }
+    table.dataTable thead th { background:var(--primaer); color:white; border-bottom:0 !important; }
+    #featureTable tbody tr { cursor:pointer; }
+    #featureTable tbody tr:hover { background:#F3F1ED !important; }
+    #featureTable tbody tr.row-selected { outline:2px solid var(--primaer); outline-offset:-2px; }
+
+    .dt-top-tools {
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:12px;
+      flex-wrap:wrap;
+      position:sticky;
+      left:0;
+      z-index:8;
+      width:100%;
+      box-sizing:border-box;
+      margin:0 0 10px 0;
+      padding:8px 10px;
+      background:#FBFAF8;
+      border:1px solid var(--kant);
+      border-radius:10px;
+    }
+    .dt-top-left,
+    .dt-bottom-info {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .dt-bottom-info {
+      position:sticky;
+      left:0;
+      margin:10px 0 0 0;
+      padding:6px 2px 0 2px;
+      color:var(--muted);
+    }
+    .dt-top-tools .dt-buttons,
+    .dt-top-tools .dataTables_length,
+    .dt-top-tools .dataTables_paginate,
+    .dt-bottom-info .dataTables_info {
+      float:none !important;
+      text-align:left !important;
+      margin:0 !important;
+      padding:0 !important;
+    }
+    .dt-top-tools .dataTables_paginate {
+      display:flex;
+      align-items:center;
+      gap:2px;
+      white-space:nowrap;
+    }
+    .dataTables_wrapper .dataTables_paginate { white-space:nowrap; }
+    .dataTables_wrapper .dataTables_filter { display:none !important; }
+    .dataTables_wrapper .dt-buttons .dt-button {
+      border-radius:999px;
+      border:1px solid var(--kant);
+      background:white;
+      color:var(--primaer);
+      padding:6px 10px;
+      font-weight:700;
+    }
+    .dataTables_wrapper .dt-buttons .dt-button:hover {
+      background:var(--primaer) !important;
+      color:white !important;
+      border-color:var(--primaer) !important;
+    }
+    .dataTables_wrapper .dataTables_length label {
+      display:flex;
+      align-items:center;
+      gap:6px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .dataTables_wrapper .dataTables_length select {
+      border:1px solid var(--kant);
+      border-radius:8px;
+      padding:4px 6px;
+      background:white;
+      font-family:"Segoe UI", Arial, sans-serif;
+    }
+
+    .legend { background:white; border-radius:10px; padding:10px; line-height:1.35; box-shadow:0 1px 8px rgba(0,0,0,0.15); max-width:290px; font-size:12px; }
+    .ol-legend-control { position:absolute; right:12px; bottom:28px; z-index:35; }
+    .legend-header-row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .legend-toggle { border:1px solid var(--kant); border-radius:8px; background:var(--lysebrun); color:var(--sort); padding:4px 7px; font-size:12px; line-height:1; }
+    .legend.collapsed { max-width:210px; }
+    .legend.collapsed .legend-body { display:none; }
+    .ol-popup { position:absolute; background:white; box-shadow:0 2px 12px rgba(0,0,0,0.24); padding:12px; border-radius:12px; border:1px solid var(--kant); bottom:12px; left:-50px; min-width:260px; max-width:360px; font:13px/1.4 "Segoe UI", Arial, sans-serif; }
+    .ol-popup:after, .ol-popup:before { top:100%; border:solid transparent; content:" "; height:0; width:0; position:absolute; pointer-events:none; }
+    .ol-popup:after { border-top-color:white; border-width:10px; left:48px; margin-left:-10px; }
+    .ol-popup-closer { text-decoration:none; position:absolute; top:6px; right:8px; color:var(--primaer); font-weight:700; }
+    .ol-popup-closer:after { content:"x"; }
+    .popup-zoom-plan { margin-top:10px; background:var(--primaer); color:white; border-radius:8px; padding:7px 9px; font-size:12px; }
+    .legend b { color:var(--primaer); display:block; margin-bottom:6px; }
+    .legend img { display:block; max-width:260px; max-height:420px; object-fit:contain; }
+    .legend-row { display:grid; grid-template-columns:14px minmax(0,1fr); gap:7px; align-items:center; margin:4px 0; }
+    .legend-swatch { width:14px; height:14px; border-radius:4px; border:1px solid rgba(0,0,0,0.25); }
+    .leaflet-popup-content-wrapper { border-radius:12px; }
+    .popup-title { color:var(--primaer); font-weight:700; font-size:15px; margin-bottom:6px; }
+    a { color:var(--primaer); font-weight:650; }
+
+
+
+    .welcome-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17,17,17,0.42);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      z-index: 10000;
+    }
+    .welcome-modal-backdrop[hidden] { display: none; }
+    .welcome-modal {
+      width: min(620px, 100%);
+      background: white;
+      border-radius: 18px;
+      border: 1px solid var(--kant);
+      box-shadow: 0 20px 55px rgba(0,0,0,0.28);
+      overflow: hidden;
+    }
+    .welcome-modal-header {
+      background: var(--primaer);
+      color: white;
+      padding: 18px 20px;
+    }
+    .welcome-modal-header h2 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+    .welcome-modal-body {
+      padding: 18px 20px 20px 20px;
+      line-height: 1.5;
+      font-size: 15px;
+    }
+    .welcome-modal-body p { margin: 0 0 12px 0; }
+    .welcome-modal-note {
+      background: #F4F0EA;
+      border-left: 5px solid var(--lysegul);
+      border-radius: 10px;
+      padding: 11px 12px;
+      margin: 14px 0;
+      font-size: 14px;
+    }
+    .welcome-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .welcome-modal-close {
+      background: var(--primaer);
+      color: white;
+      min-width: 120px;
+    }
+
+    @media (max-width:1250px) { main { grid-template-columns:1fr; grid-template-rows:540px auto; } }
+    @media (max-width:1050px) { .layout { grid-template-columns:1fr; } main { grid-template-columns:1fr; grid-template-rows:540px auto; } }
+  </style>
+</head>
+<body>
+
+<div id="welcomeModal" class="welcome-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="welcomeModalTitle">
+  <div class="welcome-modal">
+    <div class="welcome-modal-header">
+      <h2 id="welcomeModalTitle">Forslag til lokalplaner i Plandata.dk</h2>
+    </div>
+    <div class="welcome-modal-body">
+      <p>Dette er en løsning, der viser lokalplaner i forslag.</p>
+      <p>De viste lokalplanforslag kan enten have en aktiv høring eller en afsluttet høring.</p>
+      <div class="welcome-modal-note">
+        Lokalplanforslag, hvor høringen er afsluttet, afventer videre behandling og politisk stillingtagen i kommunen.
+      </div>
+      <div class="welcome-modal-actions">
+        <button id="welcomeModalClose" class="welcome-modal-close" type="button">Forstået</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header>
+  <h1>Forslag til lokalplaner</h1>
+</header>
+
+<div class="layout">
+  <aside>
+    <div class="info-box">
+      <h2>Lokalplanforslag</h2>
+      <p>Her vises lokalplanforslag. Brug filtrene til at afgrænse kort og tabel.</p>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi"><strong id="kpiPlans">-</strong><span>planforslag vist</span></div>
+      <div class="kpi"><strong id="kpiMunicipalities">-</strong><span>kommuner</span></div>
+    </div>
+
+    <div class="filter-box">
+      <label class="filter-title" for="textSearch">Tekstsøgning</label>
+      <input id="textSearch" type="search" placeholder="Søg på plannavn, kommune, plan-id eller zonestatus..." />
+      <div class="button-row">
+        <button id="clearSearch" class="secondary" type="button">Nulstil søgning</button>
+        <button id="zoomFiltered" class="primary" type="button">Zoom til viste</button>
+      </div>
+    </div>
+
+    <div class="filter-box">
+      <label class="filter-title" for="hearingFilter">Status på høring</label>
+      <select id="hearingFilter" multiple>
+        <option value="in_progress" selected>Høring i gang</option>
+        <option value="ended">Høring afsluttet</option>
+      </select>
+      <div class="button-row">
+        <button id="selectAllHearing" type="button">Vælg alle</button>
+        <button id="clearHearing" class="secondary" type="button">Vis alle status</button>
+      </div>
+    </div>
+
+    <div class="filter-box">
+      <label class="filter-title" for="municipalityFilter">Kommune</label>
+      <select id="municipalityFilter" multiple class="native-multi-source" aria-hidden="true"></select>
+      <div id="municipalityDropdown" class="multi-dropdown">
+        <button id="municipalityDropdownButton" class="multi-dropdown-button" type="button" aria-expanded="false">Ingen kommuner valgt</button>
+        <div id="municipalityDropdownMenu" class="multi-dropdown-menu" hidden></div>
+      </div>
+      <div class="button-row">
+        <button id="selectAllMunicipalities" type="button">Vælg alle</button>
+        <button id="clearMunicipalities" class="secondary" type="button">Ryd kommunefilter</button>
+      </div>
+    </div>
+
+    <div id="loadStatus" class="status-line" style="display:none;"></div>
+  </aside>
+
+  <main>
+    <div class="map-card">
+      <div class="map-actions">
+        <button id="toggleMapWidth" class="secondary" type="button">Åbn kort i fuld bredde</button>
+        <button id="resetMapView" class="secondary" type="button">Vis hele Danmark</button>
+        <button id="baseLight" class="secondary base-active" type="button">Lyst kort</button>
+        <button id="baseAerial" class="secondary" type="button">Luftfoto</button>
+      </div>
+      <div id="map"></div>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <h2>Aktuelle planforslag</h2>
+        <div class="table-actions">
+          <button id="toggleTableWidth" class="secondary" type="button">Åbn tabel i fuld bredde</button>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table id="featureTable" class="display nowrap">
+          <thead>
+            <tr>
+              <th>Plannavn</th>
+              <th>Kommune</th>
+              <th>Høringsstart</th>
+              <th>Høringsslut</th>
+              <th>Høringsstatus</th>
+              <th>Generel anvendelse</th>
+              <th>Plan-id</th>
+              <th>Link</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ol@v10.4.0/dist/ol.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+
+
+<script>
+(function() {
+  "use strict";
+
+  const WFS_BASE = "https://geoserver.plandata.dk/geoserver/wfs";
+  const WMS_BASE = "https://geoserver.plandata.dk/geoserver/wms";
+  const LEGEND_URL = "https://geoserver.plandata.dk/geoserver/ows?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer=pdk%3Atheme_pdk_lokalplan_forslag";
+  const INITIAL_CENTER_LONLAT = [10.2, 56.1];
+  const INITIAL_ZOOM = 7;
+  const DENMARK_EXTENT_LONLAT = [7.8, 54.45, 15.3, 57.9];
+  const DENMARK_MASK_EXTENT_LONLAT = [7.2, 54.2, 15.8, 58.2];
+  const MUNICIPALITIES_URL = "https://api.dataforsyningen.dk/kommuner?format=geojson";
+  const TODAY = new Date();
+  TODAY.setHours(0, 0, 0, 0);
+
+  const LAYER_CANDIDATES = [
+    "theme_pdk_lokalplan_forslag",
+    "theme_pdk:theme_pdk_lokalplan_forslag",
+    "theme_pdk:lokalplan_forslag",
+    "lokalplan_forslag",
+    "theme_pdk:theme_pdk_lokalplan_forslag_v",
+    "theme_pdk:lokalplan_forslag_v",
+    "theme_pdk_lokalplan_forslag_v",
+    "lokalplan_forslag_v"
+  ];
+
+  const FIELD_CANDIDATES = {
+    planid: ["planid", "plan_id", "lokalplanid", "id", "objectid", "objektid", "gml_id"],
+    title: ["plannavn", "navn", "plantitel", "titel", "lokalplannavn", "plan_navn"],
+    municipality: ["kommunenavn", "komnavn", "kommune", "kommune_navn", "kom_navn", "kommuner", "kommunekode", "komkode"],
+    start: ["datostart", "dato_start", "hoeringstart", "h\u00f8ringsstart", "offentligstart", "startdato", "start_dato"],
+    end: ["datoslut", "dato_slut", "hoeringslut", "h\u00f8ringsslut", "offentligslut", "slutdato", "slut_dato"],
+    zone: ["zonestatus", "zone", "zone_status", "planzone", "zonekode"],
+    application: ["anvendelsegenerel", "anvendelse_generel", "generel_anvendelse", "generelanvendelse", "generel_anvend", "generel_anv", "anvendelse", "anvendelseskategori", "anvendelseskategorier", "anvgen", "genanvend", "gen_anv", "anvendgen", "anvendelse_gen", "plananvendelse", "anvkat", "anv_kategori", "anvbetegnelse", "anvtekst"],
+    url: ["url", "planurl", "doklink", "link", "plandokument", "pdf", "plandokumenturl"],
+    area: ["areal", "areal_m2", "areal_ha", "shape_area", "st_area_shape_", "geometri_area"]
+  };
+
+  let map;
+  let table;
+  let baseLightLayer;
+  let baseAerialLayer;
+  let wmsLayers = [];
+  let selectedLayerName = null;
+  let allItems = [];
+  let vectorSource;
+  let vectorLayer;
+  let municipalityMaskSource;
+  let municipalityMaskLayer;
+  let municipalityBoundarySource;
+  let municipalityBoundaryLayer;
+  let municipalityGeojson = null;
+  let municipalityFeaturesByName = new Map();
+  let featureByKey = new Map();
+  let popupOverlay;
+  let popupContent;
+  let popupCloser;
+  let legendElement;
+  let municipalitySearchQuery = "";
+
+  function setStatus(message, type = "") {
+    const el = document.getElementById("loadStatus");
+    if (!el) return;
+    el.className = "status-line" + (type ? " " + type : "");
+    el.innerHTML = message;
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+  }
+
+  function normalize(value) {
+    return String(value ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+  }
+
+  function cleanText(value, fallback = "Ikke oplyst") {
+    const s = String(value ?? "").trim();
+    if (!s || ["na", "null", "none", "undefined"].includes(s.toLowerCase())) return fallback;
+    return s;
+  }
+
+  function formatNumberDa(value, digits = 0) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return "";
+    return n.toLocaleString("da-DK", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  }
+
+  function parseDateValue(value) {
+    if (value instanceof Date) return value;
+    const raw = String(value ?? "").trim();
+    if (!raw || ["na", "null", "none"].includes(raw.toLowerCase())) return null;
+    let m = raw.match(/^(\d{4})(\d{2})(\d{2})(?:\.0+)?$/);
+    if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    m = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    m = raw.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+    if (m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+    m = raw.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+    return null;
+  }
+
+  function displayDate(date) {
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("da-DK", { day:"2-digit", month:"2-digit", year:"numeric" });
+  }
+
+  function findProp(properties, candidates) {
+    const keys = Object.keys(properties || {});
+    const lowerMap = new Map(keys.map(k => [k.toLowerCase(), k]));
+    for (const candidate of candidates) {
+      if (lowerMap.has(candidate.toLowerCase())) return properties[lowerMap.get(candidate.toLowerCase())];
+    }
+    for (const key of keys) {
+      const nKey = normalize(key);
+      if (candidates.some(c => nKey.includes(normalize(c)))) return properties[key];
+    }
+    return "";
+  }
+
+  function firstNonEmpty(...values) {
+    for (const value of values) {
+      if (value !== null && value !== undefined && String(value).trim() !== "") return value;
+    }
+    return "";
+  }
+
+  function normalizeZone(value) {
+    const s = cleanText(value, "Ikke oplyst");
+    const n = normalize(s);
+    if (!n || ["ikke oplyst", "na", "null", "none", "undefined"].includes(n)) return "Ikke oplyst";
+    if (n.includes("byzone")) return "Byzone";
+    if (n.includes("landzone")) return "Landzone";
+    if (n.includes("sommerhus")) return "Sommerhusomr\u00e5de";
+    return s;
+  }
+
+  function knownApplicationFromText(value) {
+    const n = normalize(value);
+    const code = String(value ?? "").trim();
+    const codeMap = {
+      "11": "Boligomr\u00e5de",
+      "21": "Blandet bolig og erhverv",
+      "31": "Erhvervsomr\u00e5de",
+      "41": "Centeromr\u00e5de",
+      "51": "Rekreativt omr\u00e5de",
+      "61": "Sommerhusomr\u00e5de",
+      "71": "Omr\u00e5de til offentlige form\u00e5l",
+      "81": "Tekniske anl\u00e6g",
+      "91": "Landomr\u00e5de",
+      "96": "Andet"
+    };
+    if (codeMap[code]) return codeMap[code];
+    if (!n) return "";
+    if (n.includes("blandet") && n.includes("bolig") && n.includes("erhverv")) return "Blandet bolig og erhverv";
+    if (n.includes("bolig")) return "Boligomr\u00e5de";
+    if (n.includes("erhverv")) return "Erhvervsomr\u00e5de";
+    if (n.includes("center")) return "Centeromr\u00e5de";
+    if (n.includes("rekreat")) return "Rekreativt omr\u00e5de";
+    if (n.includes("offentlig") || n.includes("offentlige")) return "Omr\u00e5de til offentlige form\u00e5l";
+    if (n.includes("sommerhus")) return "Sommerhusomr\u00e5de";
+    if (n.includes("teknisk") || n.includes("tekniske") || n.includes("anlaeg") || n.includes("anl\u00e6g")) return "Tekniske anl\u00e6g";
+    if (n.includes("landomr")) return "Landomr\u00e5de";
+    if (n.includes("ikke reguleret")) return "Anvendelse ikke reguleret";
+    if (n.includes("kompleks")) return "Kompleks plan";
+    if (n === "andet" || n.includes("andet")) return "Andet";
+    return "";
+  }
+
+  function normalizeApplication(value, properties) {
+    const direct = knownApplicationFromText(value);
+    if (direct) return direct;
+    const propText = Object.values(properties || {}).join(" ");
+    const fromProps = knownApplicationFromText(propText);
+    return fromProps || "Ikke oplyst";
+  }
+
+  function areaHa(feature, properties) {
+    const explicit = findProp(properties, FIELD_CANDIDATES.area);
+    const raw = String(explicit ?? "").replace(/\./g, "").replace(",", ".").replace(/[^0-9.\-]/g, "");
+    const n = Number(raw);
+    if (Number.isFinite(n) && n > 0) return n > 100000 ? n / 10000 : n;
+    try { return turf.area(feature) / 10000; } catch(e) { return NaN; }
+  }
+
+  function asLink(value) {
+    const raw = String(value ?? "").trim();
+    if (!raw || ["na", "null", "none", "ikke oplyst"].includes(normalize(raw))) return "";
+    const hit = raw.match(/https?:\/\/[^\s<>"]+/i);
+    const url = hit ? hit[0] : raw;
+    if (/^https?:\/\//i.test(url)) return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">\u00c5bn plan</a>`;
+    return escapeHtml(raw);
+  }
+
+  function selectedValues(selectId) {
+    return Array.from(document.getElementById(selectId).selectedOptions).map(o => o.value);
+  }
+
+  function setAllSelected(selectId, selected) {
+    Array.from(document.getElementById(selectId).options).forEach(o => o.selected = selected);
+    if (selectId === "municipalityFilter") {
+      municipalitySearchQuery = "";
+      renderMunicipalityDropdown();
+      updateMunicipalityDropdownLabel();
+    }
+  }
+
+  function updateMunicipalityDropdownLabel() {
+    const select = document.getElementById("municipalityFilter");
+    const button = document.getElementById("municipalityDropdownButton");
+    if (!select || !button) return;
+    const selected = Array.from(select.selectedOptions).map(o => o.textContent);
+    const total = select.options.length;
+    if (selected.length === 0) button.textContent = "Ingen kommuner valgt";
+    else if (selected.length === total) button.textContent = "Alle kommuner";
+    else if (selected.length === 1) button.textContent = selected[0];
+    else button.textContent = `${selected.length} kommuner valgt`;
+  }
+
+  function fuzzyMunicipalityScore(label, query) {
+    const text = normalize(label);
+    const q = normalize(query);
+    if (!q) return 1000;
+    if (text === q) return 0;
+    if (text.startsWith(q)) return 1;
+    if (text.includes(q)) return 2 + text.indexOf(q) / 100;
+
+    let ti = 0;
+    let gaps = 0;
+    for (let qi = 0; qi < q.length; qi++) {
+      const found = text.indexOf(q[qi], ti);
+      if (found === -1) return Infinity;
+      gaps += Math.max(0, found - ti);
+      ti = found + 1;
+    }
+    return 10 + gaps + Math.abs(text.length - q.length) / 10;
+  }
+
+  function municipalityMatches(option, query) {
+    if (!query) return true;
+    return Number.isFinite(fuzzyMunicipalityScore(option.textContent, query));
+  }
+
+  function renderMunicipalityDropdown() {
+    const select = document.getElementById("municipalityFilter");
+    const menu = document.getElementById("municipalityDropdownMenu");
+    if (!select || !menu) return;
+
+    const options = Array.from(select.options)
+      .map((option, index) => ({ option, index, score: fuzzyMunicipalityScore(option.textContent, municipalitySearchQuery) }))
+      .filter(item => municipalityMatches(item.option, municipalitySearchQuery))
+      .sort((a, b) => a.score - b.score || a.option.textContent.localeCompare(b.option.textContent, "da"));
+
+    menu.innerHTML = `
+      <input id="municipalityDropdownSearch" class="multi-dropdown-search" type="search" autocomplete="off" placeholder="Søg kommune..." value="${escapeHtml(municipalitySearchQuery)}">
+      <div class="multi-dropdown-options">
+        ${options.length ? options.map(({ option, index }) => `
+          <label class="multi-dropdown-option">
+            <input type="checkbox" data-municipality-index="${index}" ${option.selected ? "checked" : ""}>
+            <span>${escapeHtml(option.textContent)}</span>
+          </label>
+        `).join("") : `<div class="multi-dropdown-empty">Ingen kommuner matcher søgningen</div>`}
+      </div>
+    `;
+
+    const search = document.getElementById("municipalityDropdownSearch");
+    if (search) {
+      search.addEventListener("input", () => {
+        municipalitySearchQuery = search.value;
+        renderMunicipalityDropdown();
+        const nextSearch = document.getElementById("municipalityDropdownSearch");
+        if (nextSearch) {
+          nextSearch.focus();
+          nextSearch.setSelectionRange(nextSearch.value.length, nextSearch.value.length);
+        }
+      });
+      search.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          municipalitySearchQuery = "";
+          renderMunicipalityDropdown();
+        }
+      });
+    }
+
+    menu.querySelectorAll("input[data-municipality-index]").forEach(input => {
+      input.addEventListener("change", () => {
+        const option = select.options[Number(input.dataset.municipalityIndex)];
+        if (option) option.selected = input.checked;
+        updateMunicipalityDropdownLabel();
+        applyFilters();
+        updateMunicipalityMaskAndZoom({ zoom:true });
+      });
+    });
+    updateMunicipalityDropdownLabel();
+  }
+
+  function initMunicipalityDropdown() {
+    const button = document.getElementById("municipalityDropdownButton");
+    const menu = document.getElementById("municipalityDropdownMenu");
+    if (!button || !menu || button.dataset.bound === "true") return;
+    button.dataset.bound = "true";
+    button.addEventListener("click", event => {
+      event.stopPropagation();
+      const open = menu.hidden;
+      menu.hidden = !open;
+      button.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) {
+        renderMunicipalityDropdown();
+        window.setTimeout(() => {
+          const search = document.getElementById("municipalityDropdownSearch");
+          if (search) search.focus();
+        }, 0);
+      }
+    });
+    menu.addEventListener("click", event => event.stopPropagation());
+    document.addEventListener("click", () => {
+      menu.hidden = true;
+      button.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  async function fetchJson(url) {
+    const response = await fetch(url, { mode:"cors", cache:"no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status} ved hentning af ${url}`);
+    return response.json();
+  }
+
+  function initMap() {
+    baseLightLayer = new ol.layer.Tile({
+      source: new ol.source.XYZ({
+        url: "https://{a-d}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        attributions: "&copy; OpenStreetMap-bidragsydere &copy; CARTO",
+        maxZoom: 20
+      }),
+      visible: true,
+      zIndex: 0
+    });
+    baseAerialLayer = new ol.layer.Tile({
+      source: new ol.source.XYZ({
+        url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        attributions: "Tiles &copy; Esri",
+        maxZoom: 19
+      }),
+      visible: false,
+      zIndex: 0
+    });
+    vectorSource = new ol.source.Vector();
+    vectorLayer = new ol.layer.Vector({
+      source: vectorSource,
+      style: new ol.style.Style({
+        fill: new ol.style.Fill({ color: "rgba(0,0,0,0.01)" }),
+        stroke: new ol.style.Stroke({ color: "rgba(0,0,0,0)", width: 1 })
+      }),
+      zIndex: 20
+    });
+
+    municipalityMaskSource = new ol.source.Vector();
+    municipalityMaskLayer = new ol.layer.Vector({
+      source: municipalityMaskSource,
+      style: new ol.style.Style({
+        fill: new ol.style.Fill({ color: "rgba(44,75,57,0.30)" }),
+        stroke: new ol.style.Stroke({ color: "rgba(44,75,57,0)", width: 0 })
+      }),
+      zIndex: 12
+    });
+
+    municipalityBoundarySource = new ol.source.Vector();
+    municipalityBoundaryLayer = new ol.layer.Vector({
+      source: municipalityBoundarySource,
+      style: new ol.style.Style({
+        fill: new ol.style.Fill({ color: "rgba(255,255,255,0)" }),
+        stroke: new ol.style.Stroke({ color: "#2C4B39", width: 2.4 })
+      }),
+      zIndex: 16
+    });
+
+    map = new ol.Map({
+      target: "map",
+      layers: [baseLightLayer, baseAerialLayer, municipalityMaskLayer, municipalityBoundaryLayer, vectorLayer],
+      view: new ol.View({
+        center: ol.proj.fromLonLat(INITIAL_CENTER_LONLAT),
+        zoom: INITIAL_ZOOM
+      }),
+      controls: ol.control.defaults.defaults().extend([new ol.control.ScaleLine()])
+    });
+
+    createPopup();
+    createLegendControl();
+
+    map.on("singleclick", function(evt) {
+      const feature = map.forEachFeatureAtPixel(evt.pixel, f => f && f.get("item") ? f : null, { hitTolerance: 4 });
+      if (!feature) {
+        popupOverlay.setPosition(undefined);
+        return;
+      }
+      const item = feature.get("item");
+      if (!item) return;
+      popupContent.innerHTML = makePopup(item);
+      popupOverlay.setPosition(evt.coordinate);
+      highlightTableRow(item.key);
+    });
+
+    map.on("pointermove", function(evt) {
+      if (evt.dragging) return;
+      let hit = false;
+      map.forEachFeatureAtPixel(evt.pixel, f => { if (f && f.get("item")) hit = true; return hit; }, { hitTolerance: 4 });
+      map.getTargetElement().style.cursor = hit ? "pointer" : "";
+    });
+  }
+
+  function createPopup() {
+    const container = document.createElement("div");
+    container.className = "ol-popup";
+    const closer = document.createElement("a");
+    closer.href = "#";
+    closer.className = "ol-popup-closer";
+    const content = document.createElement("div");
+    container.appendChild(closer);
+    container.appendChild(content);
+    document.body.appendChild(container);
+    popupContent = content;
+    content.addEventListener("click", function(event) {
+      const btn = event.target.closest("[data-zoom-plan-key]");
+      if (!btn) return;
+      event.preventDefault();
+      zoomToFeatureKey(btn.getAttribute("data-zoom-plan-key"));
+    });
+    popupCloser = closer;
+    popupOverlay = new ol.Overlay({ element: container, autoPan: { animation: { duration: 250 } } });
+    map.addOverlay(popupOverlay);
+    closer.onclick = function() {
+      popupOverlay.setPosition(undefined);
+      closer.blur();
+      return false;
+    };
+  }
+
+  function createLegendControl() {
+    const wrapper = document.createElement("div");
+    wrapper.className = "ol-legend-control";
+    legendElement = document.createElement("div");
+    legendElement.className = "legend";
+    legendElement.id = "legend";
+    legendElement.innerHTML = `<div class="legend-header-row"><b>Signatur</b><button id="toggleLegend" class="legend-toggle" type="button">Skjul</button></div><div class="legend-body"><img src="${LEGEND_URL}&_=${Date.now()}" alt="WMS-signatur for lokalplanforslag" /></div>`;
+    wrapper.appendChild(legendElement);
+    const control = new ol.control.Control({ element: wrapper });
+    map.addControl(control);
+    wrapper.addEventListener("click", event => event.stopPropagation());
+    wrapper.addEventListener("mousedown", event => event.stopPropagation());
+    wrapper.addEventListener("wheel", event => event.stopPropagation());
+    wrapper.querySelector("#toggleLegend").addEventListener("click", () => {
+      const collapsed = !legendElement.classList.contains("collapsed");
+      legendElement.classList.toggle("collapsed", collapsed);
+      wrapper.querySelector("#toggleLegend").textContent = collapsed ? "Vis" : "Skjul";
+    });
+  }
+
+  function clearWmsLayers() {
+    wmsLayers.forEach(layer => {
+      if (layer && map) map.removeLayer(layer);
+    });
+    wmsLayers = [];
+  }
+
+  function createWmsLayer(layerName, cqlFilter) {
+    const params = {
+      LAYERS: layerName,
+      FORMAT: "image/png",
+      TRANSPARENT: true,
+      VERSION: "1.3.0"
+    };
+    if (cqlFilter) params.CQL_FILTER = cqlFilter;
+    return new ol.layer.Image({
+      source: new ol.source.ImageWMS({
+        url: WMS_BASE,
+        params,
+        ratio: 1,
+        serverType: "geoserver"
+      }),
+      opacity: 0.92,
+      zIndex: 10
+    });
+  }
+
+  function renderWmsLayers(cqlFilters = null) {
+    if (!selectedLayerName || !map) return;
+    clearWmsLayers();
+    const filters = Array.isArray(cqlFilters) && cqlFilters.length ? cqlFilters : [null];
+    filters.forEach(filter => {
+      const layer = createWmsLayer(selectedLayerName, filter);
+      map.addLayer(layer);
+      wmsLayers.push(layer);
+    });
+  }
+
+  function addWmsLayer(layerName) {
+    selectedLayerName = layerName;
+    renderWmsLayers(null);
+    updateLegend([]);
+  }
+
+  function cqlLiteral(value) {
+    const s = String(value ?? "").trim();
+    if (/^-?\d+(\.\d+)?$/.test(s)) return s;
+    return "'" + s.replace(/'/g, "''") + "'";
+  }
+
+  function chunkArray(values, size) {
+    const chunks = [];
+    for (let i = 0; i < values.length; i += size) chunks.push(values.slice(i, i + size));
+    return chunks;
+  }
+
+  function buildWmsCqlFilters(items) {
+    if (!items || items.length === allItems.length) return null;
+    const planIds = [...new Set(items.map(x => String(x.planid || "").trim()).filter(Boolean))];
+    if (!planIds.length) return ["planid IN ('__ingen_match__')"];
+    return chunkArray(planIds, 120).map(chunk => `planid IN (${chunk.map(cqlLiteral).join(",")})`);
+  }
+
+  function updateWmsForItems(items) {
+    renderWmsLayers(buildWmsCqlFilters(items));
+  }
+
+  function makePopup(item) {
+    const link = asLink(item.urlRaw);
+    return `
+      <div>
+        <div class="popup-title">${escapeHtml(item.title || "Uden titel")}</div>
+        <b>Kommune:</b> ${escapeHtml(item.municipality || "Ikke oplyst")}<br>
+        <b>H\u00f8ringsstart:</b> ${escapeHtml(item.startText)}<br>
+        <b>H\u00f8ringsslut:</b> ${escapeHtml(item.endText)}<br>
+        <b>H\u00f8ringsstatus:</b> ${escapeHtml(item.hearingLabel)}<br>
+        <b>Generel anvendelse:</b> ${escapeHtml(item.application)}<br>
+        <b>Zonestatus:</b> ${escapeHtml(item.zone)}<br>
+        <b>Areal:</b> ${formatNumberDa(item.areaHa, 1)} ha<br>
+        <b>Plan-id:</b> ${escapeHtml(item.planid || "")}
+        ${link ? `<br><br>${link}` : ""}
+        <br><button class="popup-zoom-plan" type="button" data-zoom-plan-key="${escapeHtml(item.key)}">Zoom til plan</button>
+      </div>`;
+  }
+
+  function drawFeatures(items) {
+    vectorSource.clear();
+    featureByKey.clear();
+    const format = new ol.format.GeoJSON();
+    items.forEach(item => {
+      const features = format.readFeatures(item.geojson, {
+        dataProjection: "EPSG:4326",
+        featureProjection: "EPSG:3857"
+      });
+      features.forEach(feature => {
+        feature.set("item", item);
+        feature.set("key", item.key);
+        vectorSource.addFeature(feature);
+        featureByKey.set(item.key, feature);
+      });
+    });
+  }
+
+  function updateLegend() {
+    const legend = document.getElementById("legend");
+    if (!legend) return;
+    const buttonLabel = legend.classList.contains("collapsed") ? "Vis" : "Skjul";
+    const url = `${LEGEND_URL}&_=${Date.now()}`;
+    legend.innerHTML = `<div class="legend-header-row"><b>Signatur</b><button id="toggleLegend" class="legend-toggle" type="button">${buttonLabel}</button></div><div class="legend-body"><img src="${url}" alt="WMS-signatur for lokalplanforslag" /></div>`;
+    if (buttonLabel === "Vis") legend.classList.add("collapsed");
+    legend.querySelector("#toggleLegend").addEventListener("click", () => {
+      const collapsed = !legend.classList.contains("collapsed");
+      legend.classList.toggle("collapsed", collapsed);
+      legend.querySelector("#toggleLegend").textContent = collapsed ? "Vis" : "Skjul";
+    });
+  }
+
+  function resetMapView() {
+    if (!map) return;
+    const extent = ol.proj.transformExtent(DENMARK_EXTENT_LONLAT, "EPSG:4326", "EPSG:3857");
+    map.getView().fit(extent, { padding:[22,22,22,22], duration:250 });
+  }
+
+  function zoomToItems(items) {
+    if (!items.length || !vectorSource || vectorSource.isEmpty()) return;
+    try {
+      map.getView().fit(vectorSource.getExtent(), { padding:[35,35,35,35], maxZoom:13, duration:250 });
+    } catch(e) { console.warn(e); }
+  }
+
+  function zoomToFeatureKey(key) {
+    const feature = featureByKey.get(key);
+    if (!feature) return;
+    try {
+      const geometry = feature.getGeometry();
+      const extent = geometry.getExtent();
+      map.getView().fit(extent, { padding:[55,55,55,55], maxZoom:14, duration:250 });
+      const item = feature.get("item");
+      const coordinate = ol.extent.getCenter(extent);
+      popupContent.innerHTML = makePopup(item);
+      setTimeout(() => popupOverlay.setPosition(coordinate), 280);
+    } catch(e) { console.warn(e); }
+  }
+
+  async function loadWfsLayer() {
+    let lastError = null;
+    for (const typeName of LAYER_CANDIDATES) {
+      const params = new URLSearchParams({
+        service:"WFS",
+        version:"2.0.0",
+        request:"GetFeature",
+        typeNames:typeName,
+        outputFormat:"application/json",
+        srsName:"EPSG:4326",
+        count:"50000"
+      });
+      try {
+        setStatus('<span class="loader"></span>Indl\u00e6ser lokalplanforslag...');
+        const json = await fetchJson(`${WFS_BASE}?${params.toString()}`);
+        if (json && Array.isArray(json.features) && json.features.length) {
+          selectedLayerName = typeName;
+          addWmsLayer(typeName);
+          return json;
+        }
+      } catch(e) {
+        lastError = e;
+        console.warn("Kunne ikke hente", typeName, e);
+      }
+    }
+    throw lastError || new Error("Planforslagene kunne ikke hentes lige nu.");
+  }
+
+  function hearingBucket(item) {
+    if (item.startDate && item.startDate > TODAY) return "not_started";
+    if (item.endDate && item.endDate < TODAY) return "ended";
+    return "in_progress";
+  }
+
+  function hearingLabel(bucket) {
+    if (bucket === "not_started") return "H\u00f8ringsperiode ikke startet";
+    if (bucket === "ended") return "H\u00f8ring afsluttet";
+    return "H\u00f8ring i gang";
+  }
+
+  function enrichFeature(feature, index) {
+    const p = feature.properties || {};
+    const startDate = parseDateValue(findProp(p, FIELD_CANDIDATES.start));
+    const endDate = parseDateValue(findProp(p, FIELD_CANDIDATES.end));
+    const title = firstNonEmpty(findProp(p, FIELD_CANDIDATES.title), feature.id, `Lokalplanforslag ${index + 1}`);
+    const municipality = cleanText(findProp(p, FIELD_CANDIDATES.municipality), "Ikke oplyst");
+    const planid = cleanText(firstNonEmpty(findProp(p, FIELD_CANDIDATES.planid), feature.id, index + 1), "");
+    const zone = normalizeZone(findProp(p, FIELD_CANDIDATES.zone));
+    const application = normalizeApplication(findProp(p, FIELD_CANDIDATES.application), p);
+    const urlRaw = findProp(p, FIELD_CANDIDATES.url);
+    const aHa = areaHa(feature, p);
+    const item = {
+      key: `plan_${index}_${String(planid).replace(/[^a-zA-Z0-9_\-]/g, "_")}`,
+      title: String(title ?? ""),
+      municipality: String(municipality ?? ""),
+      planid: String(planid ?? ""),
+      zone,
+      application,
+      startDate,
+      endDate,
+      startText: displayDate(startDate),
+      endText: displayDate(endDate),
+      urlRaw: String(urlRaw ?? ""),
+      areaHa: aHa,
+      geojson: feature,
+      properties: p
+    };
+    item.hearingBucket = hearingBucket(item);
+    item.hearingLabel = hearingLabel(item.hearingBucket);
+    item.searchText = normalize([item.title, item.municipality, item.planid, item.zone, item.application, item.hearingLabel, item.startText, item.endText, item.urlRaw, JSON.stringify(p)].join(" "));
+    return item;
+  }
+
+
+  async function loadMunicipalities() {
+    if (municipalityGeojson) return municipalityGeojson;
+    try {
+      const response = await fetch(MUNICIPALITIES_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const json = await response.json();
+      municipalityGeojson = json;
+      municipalityFeaturesByName = new Map();
+      (json.features || []).forEach(feature => {
+        const props = feature.properties || {};
+        const name = cleanText(props.navn || props.NAVN || props.kommunenavn || props.KOMNAVN || props.name, "");
+        if (name) municipalityFeaturesByName.set(name, feature);
+      });
+      return municipalityGeojson;
+    } catch (error) {
+      console.warn("Kommunegrænser kunne ikke hentes", error);
+      return null;
+    }
+  }
+
+  function municipalityFeatureForName(name) {
+    if (!name || !municipalityFeaturesByName) return null;
+    if (municipalityFeaturesByName.has(name)) return municipalityFeaturesByName.get(name);
+    const wanted = normalize(name);
+    for (const [key, feature] of municipalityFeaturesByName.entries()) {
+      if (normalize(key) === wanted) return feature;
+    }
+    return null;
+  }
+
+  function clearMunicipalityMask() {
+    if (municipalityMaskSource) municipalityMaskSource.clear();
+    if (municipalityBoundarySource) municipalityBoundarySource.clear();
+  }
+
+  function unionMunicipalityFeatures(features) {
+    let combined = null;
+    features.forEach(feature => {
+      try {
+        combined = combined ? turf.union(combined, feature) : feature;
+      } catch (error) {
+        console.warn("Kunne ikke sammenlægge kommunegeometri", error);
+      }
+    });
+    return combined;
+  }
+
+  function updateMunicipalityMaskAndZoom({ zoom = false } = {}) {
+    if (!municipalityFeaturesByName || !municipalityFeaturesByName.size) return;
+    const select = document.getElementById("municipalityFilter");
+    const selected = selectedValues("municipalityFilter");
+    const total = select ? select.options.length : 0;
+
+    clearMunicipalityMask();
+    if (!selected.length || selected.length === total) return;
+
+    const selectedMunicipalities = selected.map(name => municipalityFeatureForName(name)).filter(Boolean);
+    if (!selectedMunicipalities.length) return;
+
+    const format = new ol.format.GeoJSON();
+    selectedMunicipalities.forEach(feature => {
+      const boundaryFeatures = format.readFeatures(feature, { dataProjection: "EPSG:4326", featureProjection: "EPSG:3857" });
+      boundaryFeatures.forEach(f => municipalityBoundarySource.addFeature(f));
+    });
+
+    try {
+      const bbox = turf.bboxPolygon(DENMARK_MASK_EXTENT_LONLAT);
+      const selectedUnion = unionMunicipalityFeatures(selectedMunicipalities);
+      const mask = selectedUnion ? turf.difference(bbox, selectedUnion) : bbox;
+      if (mask && mask.geometry) {
+        const maskFeatures = format.readFeatures(mask, { dataProjection: "EPSG:4326", featureProjection: "EPSG:3857" });
+        maskFeatures.forEach(f => municipalityMaskSource.addFeature(f));
+      }
+    } catch (error) {
+      console.warn("Masken kunne ikke dannes", error);
+      const bbox = turf.bboxPolygon(DENMARK_MASK_EXTENT_LONLAT);
+      const maskFeatures = format.readFeatures(bbox, { dataProjection: "EPSG:4326", featureProjection: "EPSG:3857" });
+      maskFeatures.forEach(f => municipalityMaskSource.addFeature(f));
+    }
+
+    if (zoom && municipalityBoundarySource && !municipalityBoundarySource.isEmpty()) {
+      try {
+        map.getView().fit(municipalityBoundarySource.getExtent(), { padding:[45,45,45,45], maxZoom:11, duration:300 });
+      } catch (error) {
+        console.warn("Kunne ikke zoome til kommune", error);
+      }
+    }
+  }
+
+  function populateFilterOptions() {
+    const muni = document.getElementById("municipalityFilter");
+    muni.innerHTML = "";
+
+    const municipalityNames = municipalityFeaturesByName && municipalityFeaturesByName.size
+      ? Array.from(municipalityFeaturesByName.keys())
+      : [...new Set(allItems.map(x => x.municipality).filter(Boolean))];
+
+    municipalityNames
+      .filter(name => name && name !== "Ikke oplyst")
+      .sort((a,b) => a.localeCompare(b, "da"))
+      .forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        option.selected = false;
+        muni.appendChild(option);
+      });
+
+    renderMunicipalityDropdown();
+    updateMunicipalityDropdownLabel();
+  }
+
+  function itemMatchesSelectedMunicipality(item, municipalities) {
+    if (!municipalities.length) return true;
+    const itemName = String(item.municipality || "").trim();
+    if (municipalities.includes(itemName)) return true;
+    const itemNorm = normalize(itemName);
+    return municipalities.some(name => normalize(name) === itemNorm);
+  }
+
+  function currentFilteredItems() {
+    const query = normalize(document.getElementById("textSearch").value);
+    const terms = query.split(/\s+/).filter(Boolean);
+    const hearing = selectedValues("hearingFilter");
+    const municipalities = selectedValues("municipalityFilter");
+    return allItems.filter(item => {
+      const textOk = !terms.length || terms.every(t => item.searchText.includes(t));
+      const hearingOk = !hearing.length || hearing.includes(item.hearingBucket);
+      const municipalityOk = itemMatchesSelectedMunicipality(item, municipalities);
+      return textOk && hearingOk && municipalityOk;
+    });
+  }
+
+  function updateKpis(items) {
+    const municipalities = new Set(items.map(x => x.municipality).filter(x => x && x !== "Ikke oplyst"));
+    document.getElementById("kpiPlans").textContent = formatNumberDa(items.length, 0);
+    document.getElementById("kpiMunicipalities").textContent = formatNumberDa(municipalities.size, 0);
+  }
+
+  function initTable() {
+    table = $("#featureTable").DataTable({
+      data: [],
+      responsive: false,
+      pageLength: 25,
+      lengthMenu: [[10,25,50,100,-1], ["10","25","50","100","Alle"]],
+      paging: true,
+      pagingType: "simple_numbers",
+      scrollX: false,
+      autoWidth: false,
+      columnDefs: [
+        { targets: 0, width: "360px" },
+        { targets: 1, width: "160px" },
+        { targets: 2, width: "120px" },
+        { targets: 3, width: "120px" },
+        { targets: 4, width: "180px" },
+        { targets: 5, width: "190px" },
+        { targets: 6, width: "160px" },
+        { targets: 7, width: "140px" }
+      ],
+      dom: "<'dt-top-tools'<'dt-top-left'Blp>>rt<'dt-bottom-info'i>",
+      buttons: [{ extend: "csvHtml5", text: "CSV" }],
+      order: [[3, "asc"], [0, "asc"]],
+      createdRow: function(row, data) {
+        row.dataset.featureKey = data.key;
+        row.title = "Klik for at zoome til planforslaget i kortet";
+      },
+      language: {
+        search: "S\u00f8g i tabel:",
+        lengthMenu: "Vis _MENU_ r\u00e6kker",
+        info: "Viser _START_ til _END_ af _TOTAL_ r\u00e6kker",
+        infoEmpty: "Ingen r\u00e6kker",
+        infoFiltered: "(filtreret fra _MAX_ r\u00e6kker)",
+        zeroRecords: "Ingen matchende r\u00e6kker",
+        paginate: { first:"F\u00f8rste", last:"Sidste", next:"N\u00e6ste", previous:"Forrige" }
+      },
+      columns: [
+        { data:"title" },
+        { data:"municipality" },
+        { data:"startText" },
+        { data:"endText" },
+        { data:"hearingStatus" },
+        { data:"application" },
+        { data:"planid" },
+        { data:"link", orderable:false }
+      ]
+    });
+  }
+
+  function updateTable(items) {
+    const rows = items.map(item => ({
+      key:item.key,
+      title:escapeHtml(item.title || "Uden titel"),
+      municipality:escapeHtml(item.municipality || "Ikke oplyst"),
+      startText:escapeHtml(item.startText),
+      endText:escapeHtml(item.endText),
+      hearingStatus:escapeHtml(item.hearingLabel || ""),
+      application:escapeHtml(item.application || "Ikke oplyst"),
+      planid:escapeHtml(item.planid),
+      link:asLink(item.urlRaw)
+    }));
+    table.clear();
+    table.rows.add(rows);
+    table.draw(false);
+    $("#featureTable tbody tr").removeClass("row-selected");
+  }
+
+  function applyFilters({ zoom = false } = {}) {
+    const items = currentFilteredItems();
+    updateWmsForItems(items);
+    drawFeatures(items);
+    updateTable(items);
+    updateKpis(items);
+    updateLegend(items);
+    updateMunicipalityMaskAndZoom({ zoom:false });
+    if (zoom) zoomToItems(items);
+  }
+
+  function highlightTableRow(key) {
+    $("#featureTable tbody tr").removeClass("row-selected");
+    const row = $(`#featureTable tbody tr[data-feature-key="${CSS.escape(key)}"]`);
+    row.addClass("row-selected");
+  }
+
+  function setBaseLayer(which) {
+    const aerial = which === "aerial";
+    baseLightLayer.setVisible(!aerial);
+    baseAerialLayer.setVisible(aerial);
+    document.getElementById("baseLight").classList.toggle("base-active", !aerial);
+    document.getElementById("baseAerial").classList.toggle("base-active", aerial);
+  }
+
+  function bindUi() {
+    initMunicipalityDropdown();
+    $("#featureTable tbody").on("click", "tr", function() {
+      const rowData = table.row(this).data();
+      if (!rowData || !rowData.key) return;
+      $("#featureTable tbody tr").removeClass("row-selected");
+      $(this).addClass("row-selected");
+      zoomToFeatureKey(rowData.key);
+    });
+    document.getElementById("textSearch").addEventListener("input", () => applyFilters());
+    document.getElementById("hearingFilter").addEventListener("change", () => applyFilters());
+    document.getElementById("municipalityFilter").addEventListener("change", () => { updateMunicipalityDropdownLabel(); applyFilters(); updateMunicipalityMaskAndZoom({ zoom:true }); });
+    document.getElementById("clearSearch").addEventListener("click", () => { document.getElementById("textSearch").value = ""; applyFilters(); });
+    document.getElementById("zoomFiltered").addEventListener("click", () => applyFilters({ zoom:true }));
+    document.getElementById("resetMapView").addEventListener("click", resetMapView);
+    document.getElementById("baseLight").addEventListener("click", () => setBaseLayer("light"));
+    document.getElementById("baseAerial").addEventListener("click", () => setBaseLayer("aerial"));
+
+    document.getElementById("toggleTableWidth").addEventListener("click", () => {
+      const nextExpanded = !document.body.classList.contains("table-expanded");
+      document.body.classList.remove("map-expanded");
+      document.body.classList.toggle("table-expanded", nextExpanded);
+      document.getElementById("toggleTableWidth").textContent = nextExpanded ? "Vis kort og tabel" : "\u00c5bn tabel i fuld bredde";
+      document.getElementById("toggleMapWidth").textContent = "\u00c5bn kort i fuld bredde";
+      setTimeout(() => {
+        if (map) map.updateSize();
+        if (table && table.columns) table.columns.adjust().draw(false);
+        const scroller = document.querySelector(".table-scroll");
+        if (scroller) scroller.scrollLeft = 0;
+      }, 120);
+    });
+
+    document.getElementById("toggleMapWidth").addEventListener("click", () => {
+      const nextExpanded = !document.body.classList.contains("map-expanded");
+      document.body.classList.remove("table-expanded");
+      document.body.classList.toggle("map-expanded", nextExpanded);
+      document.getElementById("toggleMapWidth").textContent = nextExpanded ? "Vis kort og tabel" : "\u00c5bn kort i fuld bredde";
+      document.getElementById("toggleTableWidth").textContent = "\u00c5bn tabel i fuld bredde";
+      setTimeout(() => {
+        if (map) map.updateSize();
+        if (table && table.columns) table.columns.adjust().draw(false);
+      }, 120);
+    });
+
+    document.getElementById("selectAllHearing").addEventListener("click", () => { setAllSelected("hearingFilter", true); applyFilters(); });
+    document.getElementById("clearHearing").addEventListener("click", () => { setAllSelected("hearingFilter", true); applyFilters(); });
+    document.getElementById("selectAllMunicipalities").addEventListener("click", () => { setAllSelected("municipalityFilter", true); applyFilters(); updateMunicipalityMaskAndZoom({ zoom:false }); });
+    document.getElementById("clearMunicipalities").addEventListener("click", () => { setAllSelected("municipalityFilter", false); applyFilters(); updateMunicipalityMaskAndZoom({ zoom:false }); });
+
+    window.addEventListener("resize", () => { if (map) map.updateSize(); if (table && table.columns) table.columns.adjust().draw(false); });
+  }
+
+
+  function initWelcomeModal() {
+    const modal = document.getElementById("welcomeModal");
+    const closeBtn = document.getElementById("welcomeModalClose");
+    if (!modal || !closeBtn) return;
+
+    function closeModal() {
+      modal.setAttribute("hidden", "hidden");
+    }
+
+    closeBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", event => {
+      if (event.target === modal) closeModal();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !modal.hasAttribute("hidden")) closeModal();
+    });
+    setTimeout(() => closeBtn.focus(), 120);
+  }
+
+  // Start de tunge datahentninger med det samme, når HTML'en er indlæst til scriptet.
+  // Scriptet ligger nederst i dokumentet, så relevante DOM-elementer findes allerede her.
+  // Det betyder, at WFS- og kommunegrænsedata hentes parallelt og ikke først efter al UI-initiering.
+  const wfsDataPromise = loadWfsLayer();
+  const municipalityDataPromise = loadMunicipalities().catch(error => {
+    console.warn("Kommunegrænser kunne ikke forhentes", error);
+    return null;
+  });
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    initWelcomeModal();
+    initMap();
+    initTable();
+    bindUi();
+    try {
+      const geojson = await wfsDataPromise;
+      allItems = geojson.features.filter(f => f && f.geometry).map(enrichFeature);
+      if (!allItems.length) throw new Error("Der blev ikke fundet lokalplanforslag i temaet.");
+
+      // Vis tabel, kort og nøgletal så snart WFS-data er klar.
+      // Kommunevælgeren fyldes bagefter, når kommunegrænserne er klar.
+      setStatus(`${formatNumberDa(allItems.length)} lokalplanforslag er indl\u00e6st.`, "ok");
+      applyFilters({ zoom:false });
+      resetMapView();
+
+      await municipalityDataPromise;
+      populateFilterOptions();
+      updateMunicipalityMaskAndZoom({ zoom:false });
+    } catch(e) {
+      console.error(e);
+      setStatus("Planforslagene kunne ikke vises. Pr\u00f8v at genindl\u00e6se siden eller \u00e5bne filen i en moderne browser.", "error");
+      const legend = document.getElementById("legend");
+      if (legend) legend.innerHTML = `<div class="legend-header-row"><b>Signatur</b></div><div class="legend-body"><img src="${LEGEND_URL}&_=${Date.now()}" alt="WMS-signatur for lokalplanforslag" /></div>`;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
