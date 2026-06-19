@@ -1,9 +1,10 @@
+
 <!doctype html>
 <html lang="da">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Forslag til lokalplaner i Plandata.dk</title>
+  <title>Lokalplaner i høring</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.4.0/ol.css" />
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" />
@@ -129,20 +130,20 @@
     @keyframes spin { to { transform:rotate(360deg); } }
 
     .map-card { position:relative; min-width:0; min-height:560px; }
-    #map { width:100%; height:100%; min-height:560px; border-radius:14px; border:1px solid var(--kant); overflow:hidden; background:#DFE6DF; }
+    #map { width:100%; height:100%; min-height:560px; border-radius:14px; border:1px solid var(--kant); overflow:hidden; background:#F7F6F2; }
     .map-actions { position:absolute; top:12px; left:52px; z-index:30; display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-start; }
     .map-actions .base-active { background:var(--primaer); color:white; }
     .map-actions button { box-shadow:0 2px 8px rgba(0,0,0,0.18); }
     .table-card { padding:14px; overflow:hidden; min-width:0; min-height:560px; display:flex; flex-direction:column; }
     .table-scroll { width:100%; flex:1 1 auto; overflow:auto; padding-bottom:8px; }
-    .table-scroll .dataTables_wrapper { min-width:1220px; overflow:visible; }
+    .table-scroll .dataTables_wrapper { min-width:980px; overflow:visible; }
     .table-card h2 { color:var(--primaer); font-size:20px; margin:0; }
     .table-header { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; }
     .table-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
-    #featureTable { width:1220px !important; min-width:1220px; table-layout:auto; }
+    #featureTable { width:980px !important; min-width:980px; table-layout:auto; }
     #featureTable th, #featureTable td { white-space:nowrap; }
     body.table-expanded .table-scroll .dataTables_wrapper { min-width:100%; }
-    body.table-expanded #featureTable { width:100% !important; min-width:1220px; }
+    body.table-expanded #featureTable { width:100% !important; min-width:980px; }
     body.table-expanded .layout { grid-template-columns:1fr; }
     body.table-expanded aside, body.table-expanded .map-card { display:none; }
     body.table-expanded main { grid-template-columns:1fr; grid-template-rows:calc(100vh - 140px); }
@@ -252,7 +253,97 @@
     .leaflet-popup-content-wrapper { border-radius:12px; }
     .popup-title { color:var(--primaer); font-weight:700; font-size:15px; margin-bottom:6px; }
     a { color:var(--primaer); font-weight:650; }
+    .placeholder-link { color:var(--bladgroen); font-weight:650; }
 
+    .hearing-help {
+      margin-top:14px;
+      padding:12px;
+      border:1px solid var(--kant);
+      border-radius:12px;
+      background:#FBFAF8;
+      color:var(--sort);
+      font-size:13px;
+      line-height:1.45;
+    }
+    .hearing-help b { color:var(--primaer); }
+    .hearing-help a { display:inline-block; margin-top:6px; }
+    .popup-hearing-help {
+      margin-top:10px;
+      padding:9px 10px;
+      border-left:4px solid var(--lysegul);
+      border-radius:10px;
+      background:#F4F0EA;
+      font-size:12px;
+      line-height:1.35;
+    }
+    .popup-hearing-help a { margin-top:5px; display:inline-block; }
+    .hearing-cta,
+    a.hearing-cta {
+      display:inline-block;
+      margin-top:10px;
+      padding:10px 13px;
+      border-radius:999px;
+      background:var(--primaer);
+      color:white !important;
+      text-decoration:none;
+      font-weight:800;
+      box-shadow:0 2px 8px rgba(0,0,0,0.16);
+    }
+    .hearing-cta.disabled,
+    a.hearing-cta.disabled {
+      background:#777;
+      cursor:not-allowed;
+      box-shadow:none;
+    }
+    .secondary-link-row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:8px; }
+    .secondary-link-row a, .secondary-link-row button {
+      background:var(--lysebrun);
+      color:var(--primaer);
+      border-radius:999px;
+      padding:7px 10px;
+      text-decoration:none;
+      font-size:12px;
+      font-weight:750;
+      border:0;
+    }
+    .table-cta { white-space:nowrap; }
+    .learn-more-localplan { font-size:12px; display:inline-block; margin-top:6px; }
+
+    .deadline-cell {
+      white-space: nowrap;
+    }
+    .deadline-urgency {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #F4F0EA;
+      color: var(--bladgroen);
+      font-size: 11px;
+      font-weight: 700;
+      vertical-align: 1px;
+    }
+    .deadline-urgency.urgent {
+      background: #FFF2E2;
+      color: #7A3E00;
+      border: 1px solid #E2CF83;
+    }
+
+    .municipal-embed-note {
+      padding:9px 10px;
+      border-radius:10px;
+      background:#F1F7F1;
+      border:1px solid var(--lysegroen);
+      color:var(--primaer);
+      font-size:12px;
+      line-height:1.35;
+      margin-top:8px;
+      display:none;
+    }
+    body.municipality-embedded .municipality-filter-box { display:none; }
+    body.municipality-embedded .municipal-embed-note { display:block; }
+    .custom-legend-row { display:grid; grid-template-columns:14px minmax(0,1fr); gap:7px; align-items:center; margin:5px 0; }
+    .custom-legend-swatch { width:14px; height:14px; border-radius:4px; border:1px solid rgba(0,0,0,0.22); }
 
 
     .welcome-modal-backdrop {
@@ -310,22 +401,59 @@
       min-width: 120px;
     }
 
+
+    /* Layout-polering */
+    :root { --gap:22px; --panel-radius:16px; }
+    header { padding:24px 30px; }
+    .layout { gap:var(--gap); padding:var(--gap); }
+    main { gap:var(--gap); }
+    aside { display:flex; flex-direction:column; gap:14px; }
+    .hearing-help, .kpi-grid, .filter-box { margin-top:0 !important; margin-bottom:0 !important; }
+    .kpi-grid { gap:12px; }
+    .kpi, .filter-box, .table-card, .hearing-help { border-radius:var(--panel-radius); }
+    .map-card, #map, .table-card { min-height:620px; }
+    .ol-popup {
+      min-width:280px;
+      max-width:340px;
+      padding:14px;
+      z-index:80;
+    }
+    .popup-title { line-height:1.25; margin-right:18px; }
+    .map-actions {
+      max-width:calc(100% - 90px);
+      align-items:center;
+    }
+
+    /* På almindelig laptop bliver kortet primært, så siden ikke føles sammenklemt. */
+    @media (min-width:1051px) and (max-width:1500px) {
+      .layout { grid-template-columns:340px minmax(0, 1fr); }
+      main { grid-template-columns:1fr; grid-template-rows:minmax(620px, calc(100vh - 150px)); }
+      body:not(.table-expanded) .table-card { display:none; }
+      body:not(.table-expanded) .map-card,
+      body:not(.table-expanded) #map { min-height:calc(100vh - 150px); }
+      body:not(.table-expanded) #openTableFromMap { display:inline-block; }
+    }
+
+    @media (min-width:1501px) {
+      #openTableFromMap { display:none; }
+    }
+
     @media (max-width:1250px) { main { grid-template-columns:1fr; grid-template-rows:540px auto; } }
     @media (max-width:1050px) { .layout { grid-template-columns:1fr; } main { grid-template-columns:1fr; grid-template-rows:540px auto; } }
   </style>
 </head>
 <body>
 
-<div id="welcomeModal" class="welcome-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="welcomeModalTitle">
+<div id="welcomeModal" class="welcome-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="welcomeModalTitle" hidden>
   <div class="welcome-modal">
     <div class="welcome-modal-header">
-      <h2 id="welcomeModalTitle">Forslag til lokalplaner i Plandata.dk</h2>
+      <h2 id="welcomeModalTitle">Lokalplaner i høring</h2>
     </div>
     <div class="welcome-modal-body">
-      <p>Dette er en løsning, der viser lokalplaner i forslag.</p>
-      <p>De viste lokalplanforslag kan enten have en aktiv høring eller en afsluttet høring.</p>
+      <p>Denne side hjælper borgere, virksomheder, foreninger og andre interesserede med at finde lokalplaner, der aktuelt er i høring.</p>
+      <p>Du kan se lokalplanerne på kortet og finde vej til at afgive høringssvar til kommunen.</p>
       <div class="welcome-modal-note">
-        Lokalplanforslag, hvor høringen er afsluttet, afventer videre behandling og politisk stillingtagen i kommunen.
+        Vælg en lokalplan i kortet eller tabellen for at se høringsfrist og muligheder for at afgive høringssvar.
       </div>
       <div class="welcome-modal-actions">
         <button id="welcomeModalClose" class="welcome-modal-close" type="button">Forstået</button>
@@ -335,43 +463,32 @@
 </div>
 
 <header>
-  <h1>Forslag til lokalplaner i Plandata.dk</h1>
+  <h1>Lokalplaner i høring</h1>
+  <p>Se hvilke lokalplaner der er i høring, og find vej til at afgive dit høringssvar.</p>
 </header>
 
 <div class="layout">
   <aside>
-    <div class="info-box">
-      <h2>Lokalplanforslag</h2>
-      <p>Her vises lokalplanforslag. Brug filtrene til at afgrænse kort og tabel.</p>
+<div class="hearing-help">
+      <b>Vil du påvirke en lokalplan?</b><br>
+      Vælg en lokalplan i kortet eller tabellen. Her kan du se høringsfristen og finde vej til at afgive høringssvar til kommunen.
     </div>
 
     <div class="kpi-grid">
-      <div class="kpi"><strong id="kpiPlans">-</strong><span>planforslag vist</span></div>
-      <div class="kpi"><strong id="kpiMunicipalities">-</strong><span>kommuner</span></div>
+      <div class="kpi"><strong id="kpiPlans">-</strong><span>lokalplaner i høring</span></div>
+      <div class="kpi"><strong id="kpiMunicipalities">-</strong><span>kommuner med aktive høringer</span></div>
     </div>
 
     <div class="filter-box">
       <label class="filter-title" for="textSearch">Tekstsøgning</label>
-      <input id="textSearch" type="search" placeholder="Søg på plannavn, kommune, plan-id eller zonestatus..." />
+      <input id="textSearch" type="search" placeholder="Søg på lokalplan, kommune eller anvendelse..." />
       <div class="button-row">
         <button id="clearSearch" class="secondary" type="button">Nulstil søgning</button>
-        <button id="zoomFiltered" class="primary" type="button">Zoom til viste</button>
+        <button id="zoomFiltered" class="primary" type="button">Vis alle lokalplaner i høring på kortet</button>
       </div>
     </div>
 
-    <div class="filter-box">
-      <label class="filter-title" for="hearingFilter">Status på høring</label>
-      <select id="hearingFilter" multiple>
-        <option value="in_progress" selected>Høring i gang</option>
-        <option value="ended">Høring afsluttet</option>
-      </select>
-      <div class="button-row">
-        <button id="selectAllHearing" type="button">Vælg alle</button>
-        <button id="clearHearing" class="secondary" type="button">Vis alle status</button>
-      </div>
-    </div>
-
-    <div class="filter-box">
+    <div class="filter-box municipality-filter-box">
       <label class="filter-title" for="municipalityFilter">Kommune</label>
       <select id="municipalityFilter" multiple class="native-multi-source" aria-hidden="true"></select>
       <div id="municipalityDropdown" class="multi-dropdown">
@@ -384,6 +501,8 @@
       </div>
     </div>
 
+    <div class="municipal-embed-note" id="municipalEmbedNote"></div>
+
     <div id="loadStatus" class="status-line" style="display:none;"></div>
   </aside>
 
@@ -391,9 +510,8 @@
     <div class="map-card">
       <div class="map-actions">
         <button id="toggleMapWidth" class="secondary" type="button">Åbn kort i fuld bredde</button>
+        <button id="openTableFromMap" class="secondary" type="button">Vis tabel</button>
         <button id="resetMapView" class="secondary" type="button">Vis hele Danmark</button>
-        <button id="baseLight" class="secondary base-active" type="button">Lyst kort</button>
-        <button id="baseAerial" class="secondary" type="button">Luftfoto</button>
       </div>
       <div id="map"></div>
     </div>
@@ -407,14 +525,12 @@
         <table id="featureTable" class="display nowrap">
           <thead>
             <tr>
-              <th>Plannavn</th>
+              <th>Lokalplan</th>
               <th>Kommune</th>
-              <th>Høringsstart</th>
-              <th>Høringsslut</th>
-              <th>Høringsstatus</th>
-              <th>Generel anvendelse</th>
-              <th>Plan-id</th>
-              <th>Link</th>
+              <th>Høringsfrist</th>
+              <th>Anvendelse</th>
+              <th>Høringssvar</th>
+              <th>Lokalplan</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -471,10 +587,137 @@
     area: ["areal", "areal_m2", "areal_ha", "shape_area", "st_area_shape_", "geometri_area"]
   };
 
+  const APPLICATION_STYLES = [
+    { match: "bolig", label: "Boligområde", fill: "rgba(226,207,131,0.55)", stroke: "rgba(132,102,18,0.95)", swatch: "#E2CF83" },
+    { match: "erhverv", label: "Erhvervsområde", fill: "rgba(149,163,150,0.55)", stroke: "rgba(44,75,57,0.95)", swatch: "#95A396" },
+    { match: "center", label: "Centerområde", fill: "rgba(166,178,154,0.55)", stroke: "rgba(83,97,82,0.95)", swatch: "#A6B29A" },
+    { match: "rekreat", label: "Rekreativt område", fill: "rgba(83,97,82,0.38)", stroke: "rgba(44,75,57,0.95)", swatch: "#536152" },
+    { match: "offentlig", label: "Område til offentlige formål", fill: "rgba(224,216,207,0.65)", stroke: "rgba(83,97,82,0.95)", swatch: "#E0D8CF" },
+    { match: "tekniske", label: "Tekniske anlæg", fill: "rgba(120,120,120,0.42)", stroke: "rgba(70,70,70,0.95)", swatch: "#8A8A8A" },
+    { match: "sommerhus", label: "Sommerhusområde", fill: "rgba(182,203,174,0.55)", stroke: "rgba(83,97,82,0.95)", swatch: "#B6CBAE" },
+    { match: "andet", label: "Andet / ikke oplyst", fill: "rgba(255,255,255,0.45)", stroke: "rgba(44,75,57,0.95)", swatch: "#FFFFFF" }
+  ];
+
+  function applicationStyleInfo(application) {
+    const n = normalize(application);
+    return APPLICATION_STYLES.find(s => n.includes(s.match)) || APPLICATION_STYLES[APPLICATION_STYLES.length - 1];
+  }
+
+  function planVectorStyle(feature) {
+    const item = feature.get("item") || {};
+    const info = applicationStyleInfo(item.application || "");
+    return new ol.style.Style({
+      fill: new ol.style.Fill({ color: info.fill }),
+      stroke: new ol.style.Stroke({ color: info.stroke, width: 2 })
+    });
+  }
+
+  // Ét borgerrettet høringslink pr. kommune.
+  // Linkene peger så vidt muligt på kommunens samlede høringsindgang frem for en konkret sag.
+  const MUNICIPALITY_HEARING_LINKS = {
+    "København": { url: "https://blivhoert.kk.dk/", label: "Høringer - København Kommune" },
+    "Frederiksberg": { url: "https://www.frederiksberg.dk/politik/faa-indflydelse/bliv-hoert", label: "Høringer - Frederiksberg Kommune" },
+    "Ballerup": { url: "https://ballerup.dk/hoeringer-og-afgoerelser", label: "Høringer - Ballerup Kommune" },
+    "Brøndby": { url: "https://brondby.viewer.dkplan.niras.dk/plan/51", label: "Høringer - Brøndby Kommune" },
+    "Dragør": { url: "https://www.dragoer.dk/hoeringerafgoerelser", label: "Høringer - Dragør Kommune" },
+    "Gentofte": { url: "https://gentofte.dk/det-lokale-demokrati/sammen-om-gentofte/borgermoeder-hoeringer-og-afgoerelser/", label: "Høringer - Gentofte Kommune" },
+    "Gladsaxe": { url: "https://gladsaxe.dk/politik/hoeringsportalen?category=KP&area=&type=&sort=ASC", label: "Høringer - Gladsaxe Kommune" },
+    "Glostrup": { url: "https://www.glostrup.dk/demokrati/hoeringer-og-afgoerelser", label: "Høringer - Glostrup Kommune" },
+    "Herlev": { url: "https://herlev.viewer.dkplan.niras.dk/plan/2#/1206", label: "Høringer - Herlev Kommune" },
+    "Albertslund": { url: "https://albertslund.dk/by-og-bolig/byudvikling/hoeringer-afgoerelser", label: "Høringer - Albertslund Kommune" },
+    "Hvidovre": { url: "https://www.hvidovre.dk/politik/hoeringer-og-afgoerelser-hoeringsportalen", label: "Høringer - Hvidovre Kommune" },
+    "Høje-Taastrup": { url: "https://www.htk.dk/politik/hoeringer-og-afgoerelser/aktuelle-hoeringer-og-afgoerelser", label: "Høringer - Høje-Taastrup Kommune" },
+    "Lyngby-Taarbæk": { url: "https://www.ltk.dk/borger/byplanlaegning/lokalplaner/lokalplan-hoeringssvar", label: "Høringer - Lyngby-Taarbæk Kommune" },
+    "Rødovre": { url: "https://www.rk.dk/politik/hoeringer/", label: "Høringer - Rødovre Kommune" },
+    "Ishøj": { url: "https://ishoj.dk/borger/byplanlaegning/planer-i-horing/", label: "Høringer - Ishøj Kommune" },
+    "Tårnby": { url: "https://www.taarnby.dk/politik/horinger-og-aktindsigt/horinger-og-afgorelser/", label: "Høringer - Tårnby Kommune" },
+    "Vallensbæk": { url: "https://www.vallensbaek.dk/politik/foelg-med/hoeringer-tilladelser-og-afgoerelser", label: "Høringer - Vallensbæk Kommune" },
+    "Furesø": { url: "https://www.furesoe.dk/hoeringsportalen?category=PLAN&area=&sort=ASC&type=HOER", label: "Høringer - Furesø Kommune" },
+    "Allerød": { url: "https://alleroed.viewer.dkplan.niras.dk/plan/1#/1781", label: "Høringer - Allerød Kommune" },
+    "Fredensborg": { url: "https://fredensborg.dk/politik-og-indflydelse/hoeringer-og-afgoerelser?category=Kommune-+og+lokakplan&area=&type=HOER&sort=ASC", label: "Høringer - Fredensborg Kommune" },
+    "Helsingør": { url: "https://helsingor.viewer.dkplan.niras.dk/plan/2#/1211", label: "Høringer - Helsingør Kommune" },
+    "Hillerød": { url: "https://hillerod.viewer.dkplan.niras.dk/plan/8", label: "Høringer - Hillerød Kommune" },
+    "Hørsholm": { url: "https://horsholm.viewer.dkplan.niras.dk/plan/1#/1291", label: "Høringer - Hørsholm Kommune" },
+    "Rudersdal": { url: "https://rudersdal.dk/politik-og-indflydelse/borgerdialog-og-hoeringer/hoeringer", label: "Høringer - Rudersdal Kommune" },
+    "Egedal": { url: "https://www.egedalkommune.dk/demokrati-og-indflydelse/bliv-hoert-og-faa-indflydelse/hoeringer-og-afgoerelser?category=KOL&area=&type=HOER&sort=ASC", label: "Høringer - Egedal Kommune" },
+    "Frederikssund": { url: "https://www.frederikssund.dk/Politik/inddragelse/hoeringer", label: "Høringer - Frederikssund Kommune" },
+    "Greve": { url: "https://greve.viewer.dkplan.niras.dk/plan/13#/23018", label: "Høringer - Greve Kommune" },
+    "Køge": { url: "https://www.koege.dk/politik/hoeringer-afgoerelser-og-borgermoeder/hoeringsportal?category=Kommune-+og+lokalplaner&area=&type=HOER&sort=ASC", label: "Høringer - Køge Kommune" },
+    "Halsnæs": { url: "https://halsnaes.dk/politik/hoeringer-afgoerelser-og-udbud", label: "Høringer - Halsnæs Kommune" },
+    "Roskilde": { url: "https://www.roskilde.dk/da-dk/demokrati-og-indflydelse/fa-indflydelse/horinger-borgermoder-og-afgorelser/?topics=be5affbc-d3f0-4047-036d-ef63d181976c", label: "Høringer - Roskilde Kommune" },
+    "Solrød": { url: "https://solrod.dk/aktuelt/hoeringer-og-afgoerelser", label: "Høringer - Solrød Kommune" },
+    "Gribskov": { url: "https://gribskov.dk/hoeringer", label: "Høringer - Gribskov Kommune" },
+    "Odsherred": { url: "https://odsherred.dkplan.dk/plan/1#/1986", label: "Høringer - Odsherred Kommune" },
+    "Holbæk": { url: "https://planer.holbaek.dk/annoncering/", label: "Høringer - Holbæk Kommune" },
+    "Faxe": { url: "https://www.faxekommune.dk/da/hoeringer", label: "Høringer - Faxe Kommune" },
+    "Kalundborg": { url: "https://www.kalundborg.dk/demokrati/hoeringer-og-afgoerelser", label: "Høringer - Kalundborg Kommune" },
+    "Ringsted": { url: "https://ringsted.dk/da/kommunen/dialog-indflydelse/hoeringer-afgoerelser-og-borgermoeder", label: "Høringer - Ringsted Kommune" },
+    "Slagelse": { url: "https://www.slagelse.dk/da/demokrati-og-udvikling/faa-indflydelse/hoeringer/", label: "Høringer - Slagelse Kommune" },
+    "Stevns": { url: "https://stevns.viewer.dkplan.niras.dk/plan/27#/1442", label: "Høringer - Stevns Kommune" },
+    "Sorø": { url: "https://soroe.dk/politik-og-indflydelse/hoeringer-og-afgoerelser/lokalplaner/forhoeringer-og-lokalplanforslag-i-hoering", label: "Høringer - Sorø Kommune" },
+    "Lejre": { url: "https://lejre.viewer.dkplan.niras.dk/plan/1#/1624", label: "Høringer - Lejre Kommune" },
+    "Lolland": { url: "https://lolland.viewer.dkplan.niras.dk/plan/11#/", label: "Høringer - Lolland Kommune" },
+    "Næstved": { url: "https://www.naestved.dk/hoeringer?tag=10c8e8ca0eb141bd985d45d32c21b3e7", label: "Høringer - Næstved Kommune" },
+    "Guldborgsund": { url: "https://www.guldborgsund.dk/hoeringer?tag=c1baced53f5d4593ae28d779b9b40e5f", label: "Høringer - Guldborgsund Kommune" },
+    "Vordingborg": { url: "https://www.vordingborg.dk/borger/bolig-og-byggeri/lokalplaner", label: "Høringer - Vordingborg Kommune" },
+    "Bornholm": { url: "https://bornholm.dk/politik-demokrati-og-indflydelse/hoeringer-og-offentliggoerelser", label: "Høringer - Bornholm Kommune" },
+    "Middelfart": { url: "https://middelfart.dk/hoeringer", label: "Høringer - Middelfart Kommune" },
+    "Assens": { url: "https://www.assens.dk/borger/bolig-og-byggeri/lokalplaner-for-hele-assens-kommune?term=lokalplan%20h%C3%B8ring", label: "Høringer - Assens Kommune" },
+    "Faaborg-Midtfyn": { url: "https://www.fmk.dk/politik/hoeringer-og-afgoerelser/", label: "Høringer - Faaborg-Midtfyn Kommune" },
+    "Kerteminde": { url: "https://kerteminde.viewer.dkplan.niras.dk/plan/6#/1700", label: "Høringer - Kerteminde Kommune" },
+    "Nyborg": { url: "https://www.nyborg.dk/da/demokrati-og-indflydelse/faa-indflydelse/hoeringer-og-afgoerelser/", label: "Høringer - Nyborg Kommune" },
+    "Odense": { url: "https://odense.viewer.dkplan.niras.dk/plan/22#/9954", label: "Høringer - Odense Kommune" },
+    "Svendborg": { url: "https://www.svendborg.dk/hoeringer-og-afgoerelser/", label: "Høringer - Svendborg Kommune" },
+    "Nordfyns": { url: "https://www.nordfynskommune.dk/hoeringer-og-afgoerelser/", label: "Høringer - Nordfyns Kommune" },
+    "Langeland": { url: "https://langelandkommune.dk/politik-og-indflydelse/hoeringsportalen?category=KOL&area=&type=&sort=ASC", label: "Høringer - Langeland Kommune" },
+    "Ærø": { url: "https://www.aeroekommune.dk/politik-og-indflydelse/hoeringsportal", label: "Høringer - Ærø Kommune" },
+    "Haderslev": { url: "https://www.haderslev.dk/demokrati/hoeringer-og-afgoerelser", label: "Høringer - Haderslev Kommune" },
+    "Billund": { url: "https://www.billund.dk/politik-og-demokrati/hoeringer/planer/", label: "Høringer - Billund Kommune" },
+    "Sønderborg": { url: "https://lokalplaner.sonderborg.dk/", label: "Høringer - Sønderborg Kommune" },
+    "Tønder": { url: "https://www.toender.dk/din-kommune/udvikling-planer-og-projekter/lokalplaner/", label: "Høringer - Tønder Kommune" },
+    "Esbjerg": { url: "https://lokalplaner.esbjerg.dk/lokalplaner-i-hoering/", label: "Høringer - Esbjerg Kommune" },
+    "Fanø": { url: "https://fanoe.dk/borger/planlaegning/lokalplaner", label: "Høringer - Fanø Kommune" },
+    "Varde": { url: "https://vardekommune.dk/horinger-og-afgorelser/", label: "Høringer - Varde Kommune" },
+    "Vejen": { url: "https://vejen.dk/politik/hoeringer-og-afgoerelser?fbActive=1", label: "Høringer - Vejen Kommune" },
+    "Aabenraa": { url: "https://aabenraa.dk/borger/flytning-bolig-og-byggeri/kommuneplaner-og-lokalplaner/lokalplaner-i-hoering", label: "Høringer - Aabenraa Kommune" },
+    "Fredericia": { url: "https://fredericia.viewer.dkplan.niras.dk/plan/10#/54906", label: "Høringer - Fredericia Kommune" },
+    "Horsens": { url: "https://horsens.dk/politik/hoeringerfrateknikogmiljoe", label: "Høringer - Horsens Kommune" },
+    "Kolding": { url: "https://www.kolding.dk/borger/hoeringer-og-afgoerelser?category=KMLP&area=&type=&sort=ASC", label: "Høringer - Kolding Kommune" },
+    "Vejle": { url: "https://www.vejle.dk/da/hoeringer-og-afgoerelser/", label: "Høringer - Vejle Kommune" },
+    "Herning": { url: "https://www.herning.dk/politik/offentliggoerelser-og-hoeringer/lokalplaner-og-kommuneplantillaeg", label: "Høringer - Herning Kommune" },
+    "Holstebro": { url: "https://www.holstebro.dk/annonceringer", label: "Høringer - Holstebro Kommune" },
+    "Lemvig": { url: "https://lemvig.dk/politik-og-indflydelse/hoeringer-og-afgoerelser", label: "Høringer - Lemvig Kommune" },
+    "Struer": { url: "https://www.struer.dk/om-kommunen/hoeringer-afgoerelser-og-offentliggoerelser", label: "Høringer - Struer Kommune" },
+    "Syddjurs": { url: "https://www.syddjurs.dk/politik/hoeringer-og-afgoerelser", label: "Høringer - Syddjurs Kommune" },
+    "Norddjurs": { url: "https://norddjurs.dk/politik-og-indflydelse/aktuelle-offentliggoerelser-og-hoeringer/hoeringer-af-lokalplaner-og-kommuneplantillaeg", label: "Høringer - Norddjurs Kommune" },
+    "Favrskov": { url: "https://favrskov.dk/demokrati/hoeringer-og-afgoerelser", label: "Høringer - Favrskov Kommune" },
+    "Odder": { url: "https://odder.dk/borger/teknik-and-miljoe/hoeringer-and-afgoerelser", label: "Høringer - Odder Kommune" },
+    "Randers": { url: "https://www.randers.dk/demokrati/hoeringer-og-afgoerelser/", label: "Høringer - Randers Kommune" },
+    "Silkeborg": { url: "https://silkeborglokalplaner.viewer.dkplan.niras.dk/plan/1#/35488", label: "Høringer - Silkeborg Kommune" },
+    "Samsø": { url: "https://www.samsoe.dk/erhverv/hoeringer-og-tilladelser/aktuelle-hoeringer?fbActive=1", label: "Høringer - Samsø Kommune" },
+    "Skanderborg": { url: "https://www.skanderborg.dk/aktuelle-hoeringer-og-afgoerelser", label: "Høringer - Skanderborg Kommune" },
+    "Aarhus": { url: "https://aarhus.viewer.dkplan.niras.dk/plan/3#/136865", label: "Høringer - Aarhus Kommune" },
+    "Ikast-Brande": { url: "https://ikast-brande.dk/offentliggoerelser-og-hoeringer", label: "Høringer - Ikast-Brande Kommune" },
+    "Ringkøbing-Skjern": { url: "https://www.rksk.dk/om-kommunen/annoncering/kommuneplan-lokalplaner-og-varmeplaner", label: "Høringer - Ringkøbing-Skjern Kommune" },
+    "Hedensted": { url: "https://www.hedensted.dk/politik-og-indflydelse/hoeringer-og-indflydelse/hoeringer", label: "Høringer - Hedensted Kommune" },
+    "Morsø": { url: "https://morsoe.viewer.dkplan.niras.dk/plan/20#/5307", label: "Høringer - Morsø Kommune" },
+    "Skive": { url: "https://skive.dk/demokrati-og-kommune/annoncering-hoering-og-aktindsigt/aktuelle-hoeringer-og-afgoerelser/", label: "Høringer - Skive Kommune" },
+    "Thisted": { url: "https://www.thisted.dk/politik-demokrati-and-indflydelse/hoeringer-og-offentliggoerelser", label: "Høringer - Thisted Kommune" },
+    "Viborg": { url: "https://viborg.dk/demokrati-og-indflydelse/indflydelse-og-debat/hoeringer-og-afgoerelser/", label: "Høringer - Viborg Kommune" },
+    "Brønderslev": { url: "https://bronderslev.viewer.dkplan.niras.dk/plan/53#/16151", label: "Høringer - Brønderslev Kommune" },
+    "Frederikshavn": { url: "https://frederikshavn.viewer.dkplan.niras.dk/plan/6#/1216", label: "Høringer - Frederikshavn Kommune" },
+    "Vesthimmerlands": { url: "https://vesthimmerland.viewer.dkplan.niras.dk/plan/2#/1130", label: "Høringer - Vesthimmerlands Kommune" },
+    "Læsø": { url: "https://www.laesoe.dk/borger/planlaegning-bolig-og-byggeri/planlaegning", label: "Høringer - Læsø Kommune" },
+    "Rebild": { url: "https://rebild.dk/demokrati/hoeringer-og-afgoerelser", label: "Høringer - Rebild Kommune" },
+    "Mariagerfjord": { url: "https://www.mariagerfjord.dk/demokrati/indflydelse/annoncer-og-hoeringer", label: "Høringer - Mariagerfjord Kommune" },
+    "Jammerbugt": { url: "https://www.jammerbugt.dk/demokrati-og-indflydelse/horinger-og-afgorelser/oversigt/", label: "Høringer - Jammerbugt Kommune" },
+    "Aalborg": { url: "https://www.aalborg.dk/hoeringer-og-afgoerelser/", label: "Høringer - Aalborg Kommune" },
+    "Hjørring": { url: "https://hjoerring.dk/demokrati/hoeringer-og-afgoerelser", label: "Høringer - Hjørring Kommune" }
+  };
+
   let map;
   let table;
   let baseLightLayer;
-  let baseAerialLayer;
   let wmsLayers = [];
   let selectedLayerName = null;
   let allItems = [];
@@ -492,6 +735,8 @@
   let popupCloser;
   let legendElement;
   let municipalitySearchQuery = "";
+  const URL_PARAMS = new URLSearchParams(window.location.search);
+  const EMBEDDED_MUNICIPALITY = cleanText(URL_PARAMS.get("kommune") || "", "");
 
   function setStatus(message, type = "") {
     const el = document.getElementById("loadStatus");
@@ -765,29 +1010,18 @@
   function initMap() {
     baseLightLayer = new ol.layer.Tile({
       source: new ol.source.XYZ({
-        url: "https://{a-d}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-        attributions: "&copy; OpenStreetMap-bidragsydere &copy; CARTO",
-        maxZoom: 20
+        url: "https://{a-c}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        attributions: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-bidragsydere &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
+        crossOrigin: "anonymous"
       }),
+      opacity: 1,
       visible: true,
-      zIndex: 0
-    });
-    baseAerialLayer = new ol.layer.Tile({
-      source: new ol.source.XYZ({
-        url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        attributions: "Tiles &copy; Esri",
-        maxZoom: 19
-      }),
-      visible: false,
       zIndex: 0
     });
     vectorSource = new ol.source.Vector();
     vectorLayer = new ol.layer.Vector({
       source: vectorSource,
-      style: new ol.style.Style({
-        fill: new ol.style.Fill({ color: "rgba(0,0,0,0.01)" }),
-        stroke: new ol.style.Stroke({ color: "rgba(0,0,0,0)", width: 1 })
-      }),
+      style: planVectorStyle,
       zIndex: 20
     });
 
@@ -813,7 +1047,7 @@
 
     map = new ol.Map({
       target: "map",
-      layers: [baseLightLayer, baseAerialLayer, municipalityMaskLayer, municipalityBoundaryLayer, vectorLayer],
+      layers: [baseLightLayer, municipalityMaskLayer, municipalityBoundaryLayer, vectorLayer],
       view: new ol.View({
         center: ol.proj.fromLonLat(INITIAL_CENTER_LONLAT),
         zoom: INITIAL_ZOOM
@@ -830,11 +1064,7 @@
         popupOverlay.setPosition(undefined);
         return;
       }
-      const item = feature.get("item");
-      if (!item) return;
-      popupContent.innerHTML = makePopup(item);
-      popupOverlay.setPosition(evt.coordinate);
-      highlightTableRow(item.key);
+      showPopupForFeature(feature, { center:true });
     });
 
     map.on("pointermove", function(evt) {
@@ -843,6 +1073,34 @@
       map.forEachFeatureAtPixel(evt.pixel, f => { if (f && f.get("item")) hit = true; return hit; }, { hitTolerance: 4 });
       map.getTargetElement().style.cursor = hit ? "pointer" : "";
     });
+  }
+
+
+  function showPopupForFeature(feature, options = {}) {
+    if (!feature) return;
+    const item = feature.get("item");
+    if (!item) return;
+    try {
+      const geometry = feature.getGeometry();
+      const extent = geometry.getExtent();
+      const coordinate = ol.extent.getCenter(extent);
+      if (options.center !== false) {
+        map.getView().fit(extent, { padding:[100,100,170,100], maxZoom:15, duration:220 });
+        setTimeout(() => {
+          popupContent.innerHTML = makePopup(item);
+          popupOverlay.setPosition(coordinate);
+        }, 230);
+      } else {
+        popupContent.innerHTML = makePopup(item);
+        popupOverlay.setPosition(coordinate);
+      }
+      highlightTableRow(item.key);
+    } catch(e) {
+      console.warn(e);
+      popupContent.innerHTML = makePopup(item);
+      popupOverlay.setPosition(ol.extent.getCenter(feature.getGeometry().getExtent()));
+      highlightTableRow(item.key);
+    }
   }
 
   function createPopup() {
@@ -863,7 +1121,7 @@
       zoomToFeatureKey(btn.getAttribute("data-zoom-plan-key"));
     });
     popupCloser = closer;
-    popupOverlay = new ol.Overlay({ element: container, autoPan: { animation: { duration: 250 } } });
+    popupOverlay = new ol.Overlay({ element: container, positioning:"bottom-center", offset:[0,-12], autoPan: { animation: { duration: 250 }, margin: 28 } });
     map.addOverlay(popupOverlay);
     closer.onclick = function() {
       popupOverlay.setPosition(undefined);
@@ -872,13 +1130,18 @@
     };
   }
 
+  function legendHtml() {
+    const url = `${LEGEND_URL}&_=${Date.now()}`;
+    return `<div class="legend-header-row"><b>Signatur</b><button id="toggleLegend" class="legend-toggle" type="button">Skjul</button></div><div class="legend-body"><img src="${url}" alt="Signatur for lokalplaner i høring" /></div>`;
+  }
+
   function createLegendControl() {
     const wrapper = document.createElement("div");
     wrapper.className = "ol-legend-control";
     legendElement = document.createElement("div");
     legendElement.className = "legend";
     legendElement.id = "legend";
-    legendElement.innerHTML = `<div class="legend-header-row"><b>Signatur</b><button id="toggleLegend" class="legend-toggle" type="button">Skjul</button></div><div class="legend-body"><img src="${LEGEND_URL}&_=${Date.now()}" alt="WMS-signatur for lokalplanforslag" /></div>`;
+    legendElement.innerHTML = legendHtml();
     wrapper.appendChild(legendElement);
     const control = new ol.control.Control({ element: wrapper });
     map.addControl(control);
@@ -904,7 +1167,11 @@
       LAYERS: layerName,
       FORMAT: "image/png",
       TRANSPARENT: true,
-      VERSION: "1.3.0"
+      VERSION: "1.3.0",
+      STYLES: "",
+      TILED: false,
+      ENV: "showLabels:false;labels:false;label:false",
+      FORMAT_OPTIONS: "antialiasing:on"
     };
     if (cqlFilter) params.CQL_FILTER = cqlFilter;
     return new ol.layer.Image({
@@ -932,7 +1199,7 @@
 
   function addWmsLayer(layerName) {
     selectedLayerName = layerName;
-    renderWmsLayers(null);
+    clearWmsLayers();
     updateLegend([]);
   }
 
@@ -956,24 +1223,87 @@
   }
 
   function updateWmsForItems(items) {
-    renderWmsLayers(buildWmsCqlFilters(items));
+    const filters = buildWmsCqlFilters(items);
+    renderWmsLayers(filters);
+  }
+
+
+  function municipalityHearingInfo(name) {
+    const wanted = normalize(name);
+    for (const [municipality, info] of Object.entries(MUNICIPALITY_HEARING_LINKS)) {
+      if (normalize(municipality) === wanted) return info;
+    }
+    return null;
+  }
+
+
+  function daysUntil(date) {
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) return null;
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return Math.round((d.getTime() - TODAY.getTime()) / 86400000);
+  }
+
+  function deadlineSortValue(item) {
+    if (!(item.endDate instanceof Date) || Number.isNaN(item.endDate.getTime())) return "9999-12-31";
+    const year = item.endDate.getFullYear();
+    const month = String(item.endDate.getMonth() + 1).padStart(2, "0");
+    const day = String(item.endDate.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  function deadlineUrgencyText(item) {
+    const days = daysUntil(item.endDate);
+    if (days === null) return "";
+    if (days < 0) return "";
+    if (days === 0) return "frist i dag";
+    if (days === 1) return "frist i morgen";
+    if (days <= 7) return `${days} dage`;
+    return "";
+  }
+
+  function hearingDeadlineHtml(item) {
+    const dateText = item.endText || "Ikke oplyst";
+    const sortValue = deadlineSortValue(item);
+    const urgency = deadlineUrgencyText(item);
+    const urgencyClass = urgency ? " deadline-urgency urgent" : "deadline-urgency";
+    return `<span class="deadline-cell" data-order="${escapeHtml(sortValue)}" data-sort="${escapeHtml(sortValue)}">${escapeHtml(dateText)}${urgency ? `<span class="${urgencyClass.trim()}">${escapeHtml(urgency)}</span>` : ""}</span>`;
+  }
+
+  function hearingResponseLink(item, extraClass = "") {
+    const municipality = cleanText(item.municipality, "kommunen");
+    const info = municipalityHearingInfo(municipality);
+    if (info && info.url) {
+      return `<a class="hearing-cta ${extraClass}" href="${escapeHtml(info.url)}" target="_blank" rel="noopener">Afgiv høringssvar</a>`;
+    }
+    return `<span class="hearing-cta disabled ${extraClass}" title="Der mangler link til kommunens høringsindgang">Afgiv høringssvar</span>`;
+  }
+
+  function planLink(item, label = "Se lokalplan") {
+    const raw = String(item.urlRaw ?? "").trim();
+    if (!raw || ["na", "null", "none", "ikke oplyst"].includes(normalize(raw))) return "";
+    const hit = raw.match(/https?:\/\/[^\s<>\"]+/i);
+    const url = hit ? hit[0] : raw;
+    if (/^https?:\/\//i.test(url)) return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
+    return "";
+  }
+
+  function makeHearingHelp(item) {
+    return "";
   }
 
   function makePopup(item) {
-    const link = asLink(item.urlRaw);
+    const secondaryPlanLink = planLink(item, "Se lokalplan");
     return `
       <div>
         <div class="popup-title">${escapeHtml(item.title || "Uden titel")}</div>
         <b>Kommune:</b> ${escapeHtml(item.municipality || "Ikke oplyst")}<br>
-        <b>H\u00f8ringsstart:</b> ${escapeHtml(item.startText)}<br>
-        <b>H\u00f8ringsslut:</b> ${escapeHtml(item.endText)}<br>
-        <b>H\u00f8ringsstatus:</b> ${escapeHtml(item.hearingLabel)}<br>
-        <b>Generel anvendelse:</b> ${escapeHtml(item.application)}<br>
-        <b>Zonestatus:</b> ${escapeHtml(item.zone)}<br>
-        <b>Areal:</b> ${formatNumberDa(item.areaHa, 1)} ha<br>
-        <b>Plan-id:</b> ${escapeHtml(item.planid || "")}
-        ${link ? `<br><br>${link}` : ""}
-        <br><button class="popup-zoom-plan" type="button" data-zoom-plan-key="${escapeHtml(item.key)}">Zoom til plan</button>
+        <b>Høringsfrist:</b> ${hearingDeadlineHtml(item)}<br>
+        <b>Anvendelse:</b> ${escapeHtml(item.application || "Ikke oplyst")}
+        ${hearingResponseLink(item)}
+        <div class="secondary-link-row">
+          ${secondaryPlanLink || ""}
+        </div>
       </div>`;
   }
 
@@ -998,10 +1328,10 @@
   function updateLegend() {
     const legend = document.getElementById("legend");
     if (!legend) return;
-    const buttonLabel = legend.classList.contains("collapsed") ? "Vis" : "Skjul";
-    const url = `${LEGEND_URL}&_=${Date.now()}`;
-    legend.innerHTML = `<div class="legend-header-row"><b>Signatur</b><button id="toggleLegend" class="legend-toggle" type="button">${buttonLabel}</button></div><div class="legend-body"><img src="${url}" alt="WMS-signatur for lokalplanforslag" /></div>`;
-    if (buttonLabel === "Vis") legend.classList.add("collapsed");
+    const wasCollapsed = legend.classList.contains("collapsed");
+    legend.innerHTML = legendHtml();
+    if (wasCollapsed) legend.classList.add("collapsed");
+    legend.querySelector("#toggleLegend").textContent = wasCollapsed ? "Vis" : "Skjul";
     legend.querySelector("#toggleLegend").addEventListener("click", () => {
       const collapsed = !legend.classList.contains("collapsed");
       legend.classList.toggle("collapsed", collapsed);
@@ -1028,7 +1358,7 @@
     try {
       const geometry = feature.getGeometry();
       const extent = geometry.getExtent();
-      map.getView().fit(extent, { padding:[55,55,55,55], maxZoom:14, duration:250 });
+      map.getView().fit(extent, { padding:[100,100,170,100], maxZoom:15, duration:250 });
       const item = feature.get("item");
       const coordinate = ol.extent.getCenter(extent);
       popupContent.innerHTML = makePopup(item);
@@ -1049,7 +1379,7 @@
         count:"50000"
       });
       try {
-        setStatus('<span class="loader"></span>Indl\u00e6ser lokalplanforslag...');
+        setStatus('<span class="loader"></span>Indl\u00e6ser lokalplaner...');
         const json = await fetchJson(`${WFS_BASE}?${params.toString()}`);
         if (json && Array.isArray(json.features) && json.features.length) {
           selectedLayerName = typeName;
@@ -1061,7 +1391,7 @@
         console.warn("Kunne ikke hente", typeName, e);
       }
     }
-    throw lastError || new Error("Planforslagene kunne ikke hentes lige nu.");
+    throw lastError || new Error("Lokalplanerne kunne ikke hentes lige nu.");
   }
 
   function hearingBucket(item) {
@@ -1080,7 +1410,7 @@
     const p = feature.properties || {};
     const startDate = parseDateValue(findProp(p, FIELD_CANDIDATES.start));
     const endDate = parseDateValue(findProp(p, FIELD_CANDIDATES.end));
-    const title = firstNonEmpty(findProp(p, FIELD_CANDIDATES.title), feature.id, `Lokalplanforslag ${index + 1}`);
+    const title = firstNonEmpty(findProp(p, FIELD_CANDIDATES.title), feature.id, `Lokalplaner ${index + 1}`);
     const municipality = cleanText(findProp(p, FIELD_CANDIDATES.municipality), "Ikke oplyst");
     const planid = cleanText(firstNonEmpty(findProp(p, FIELD_CANDIDATES.planid), feature.id, index + 1), "");
     const zone = normalizeZone(findProp(p, FIELD_CANDIDATES.zone));
@@ -1233,12 +1563,11 @@
   function currentFilteredItems() {
     const query = normalize(document.getElementById("textSearch").value);
     const terms = query.split(/\s+/).filter(Boolean);
-    const hearing = selectedValues("hearingFilter");
-    const municipalities = selectedValues("municipalityFilter");
+    const selectedMunicipalities = EMBEDDED_MUNICIPALITY ? [EMBEDDED_MUNICIPALITY] : selectedValues("municipalityFilter");
     return allItems.filter(item => {
       const textOk = !terms.length || terms.every(t => item.searchText.includes(t));
-      const hearingOk = !hearing.length || hearing.includes(item.hearingBucket);
-      const municipalityOk = itemMatchesSelectedMunicipality(item, municipalities);
+      const hearingOk = item.hearingBucket === "in_progress";
+      const municipalityOk = itemMatchesSelectedMunicipality(item, selectedMunicipalities);
       return textOk && hearingOk && municipalityOk;
     });
   }
@@ -1249,7 +1578,19 @@
     document.getElementById("kpiMunicipalities").textContent = formatNumberDa(municipalities.size, 0);
   }
 
+  function initDeadlineOrdering() {
+    if (!$.fn.dataTable.ext.order["dom-data-order"]) {
+      $.fn.dataTable.ext.order["dom-data-order"] = function(settings, col) {
+        return this.api().column(col, { order:"index" }).nodes().map(function(td) {
+          const sortable = td.querySelector("[data-order]");
+          return sortable ? sortable.getAttribute("data-order") : (td.textContent || "").trim();
+        });
+      };
+    }
+  }
+
   function initTable() {
+    initDeadlineOrdering();
     table = $("#featureTable").DataTable({
       data: [],
       responsive: false,
@@ -1261,20 +1602,18 @@
       autoWidth: false,
       columnDefs: [
         { targets: 0, width: "360px" },
-        { targets: 1, width: "160px" },
-        { targets: 2, width: "120px" },
-        { targets: 3, width: "120px" },
-        { targets: 4, width: "180px" },
-        { targets: 5, width: "190px" },
-        { targets: 6, width: "160px" },
-        { targets: 7, width: "140px" }
+        { targets: 1, width: "150px" },
+        { targets: 2, width: "160px", orderDataType: "dom-data-order" },
+        { targets: 3, width: "190px" },
+        { targets: 4, width: "170px" },
+        { targets: 5, width: "130px" }
       ],
       dom: "<'dt-top-tools'<'dt-top-left'Blp>>rt<'dt-bottom-info'i>",
       buttons: [{ extend: "csvHtml5", text: "CSV" }],
-      order: [[3, "asc"], [0, "asc"]],
+      order: [[2, "asc"], [0, "asc"]],
       createdRow: function(row, data) {
         row.dataset.featureKey = data.key;
-        row.title = "Klik for at zoome til planforslaget i kortet";
+        row.title = "Klik for at zoome til lokalplanen i kortet";
       },
       language: {
         search: "S\u00f8g i tabel:",
@@ -1288,12 +1627,10 @@
       columns: [
         { data:"title" },
         { data:"municipality" },
-        { data:"startText" },
-        { data:"endText" },
-        { data:"hearingStatus" },
+        { data:"deadline" },
         { data:"application" },
-        { data:"planid" },
-        { data:"link", orderable:false }
+        { data:"hearingResponse", orderable:false },
+        { data:"planLink", orderable:false }
       ]
     });
   }
@@ -1303,12 +1640,10 @@
       key:item.key,
       title:escapeHtml(item.title || "Uden titel"),
       municipality:escapeHtml(item.municipality || "Ikke oplyst"),
-      startText:escapeHtml(item.startText),
-      endText:escapeHtml(item.endText),
-      hearingStatus:escapeHtml(item.hearingLabel || ""),
+      deadline:hearingDeadlineHtml(item),
       application:escapeHtml(item.application || "Ikke oplyst"),
-      planid:escapeHtml(item.planid),
-      link:asLink(item.urlRaw)
+      hearingResponse:hearingResponseLink(item, "table-cta"),
+      planLink:planLink(item, "Se lokalplan")
     }));
     table.clear();
     table.rows.add(rows);
@@ -1334,11 +1669,7 @@
   }
 
   function setBaseLayer(which) {
-    const aerial = which === "aerial";
-    baseLightLayer.setVisible(!aerial);
-    baseAerialLayer.setVisible(aerial);
-    document.getElementById("baseLight").classList.toggle("base-active", !aerial);
-    document.getElementById("baseAerial").classList.toggle("base-active", aerial);
+    if (baseLightLayer) baseLightLayer.setVisible(true);
   }
 
   function bindUi() {
@@ -1351,19 +1682,30 @@
       zoomToFeatureKey(rowData.key);
     });
     document.getElementById("textSearch").addEventListener("input", () => applyFilters());
-    document.getElementById("hearingFilter").addEventListener("change", () => applyFilters());
     document.getElementById("municipalityFilter").addEventListener("change", () => { updateMunicipalityDropdownLabel(); applyFilters(); updateMunicipalityMaskAndZoom({ zoom:true }); });
     document.getElementById("clearSearch").addEventListener("click", () => { document.getElementById("textSearch").value = ""; applyFilters(); });
     document.getElementById("zoomFiltered").addEventListener("click", () => applyFilters({ zoom:true }));
     document.getElementById("resetMapView").addEventListener("click", resetMapView);
-    document.getElementById("baseLight").addEventListener("click", () => setBaseLayer("light"));
-    document.getElementById("baseAerial").addEventListener("click", () => setBaseLayer("aerial"));
+
+    const openTableBtn = document.getElementById("openTableFromMap");
+    if (openTableBtn) {
+      openTableBtn.addEventListener("click", () => {
+        document.body.classList.remove("map-expanded");
+        document.body.classList.add("table-expanded");
+        document.getElementById("toggleTableWidth").textContent = "Vis kort";
+        document.getElementById("toggleMapWidth").textContent = "Åbn kort i fuld bredde";
+        setTimeout(() => {
+          if (map) map.updateSize();
+          if (table && table.columns) table.columns.adjust().draw(false);
+        }, 120);
+      });
+    }
 
     document.getElementById("toggleTableWidth").addEventListener("click", () => {
       const nextExpanded = !document.body.classList.contains("table-expanded");
       document.body.classList.remove("map-expanded");
       document.body.classList.toggle("table-expanded", nextExpanded);
-      document.getElementById("toggleTableWidth").textContent = nextExpanded ? "Vis kort og tabel" : "\u00c5bn tabel i fuld bredde";
+      document.getElementById("toggleTableWidth").textContent = nextExpanded ? "Vis kort" : "\u00c5bn tabel i fuld bredde";
       document.getElementById("toggleMapWidth").textContent = "\u00c5bn kort i fuld bredde";
       setTimeout(() => {
         if (map) map.updateSize();
@@ -1377,7 +1719,7 @@
       const nextExpanded = !document.body.classList.contains("map-expanded");
       document.body.classList.remove("table-expanded");
       document.body.classList.toggle("map-expanded", nextExpanded);
-      document.getElementById("toggleMapWidth").textContent = nextExpanded ? "Vis kort og tabel" : "\u00c5bn kort i fuld bredde";
+      document.getElementById("toggleMapWidth").textContent = nextExpanded ? "Vis kort" : "\u00c5bn kort i fuld bredde";
       document.getElementById("toggleTableWidth").textContent = "\u00c5bn tabel i fuld bredde";
       setTimeout(() => {
         if (map) map.updateSize();
@@ -1385,12 +1727,25 @@
       }, 120);
     });
 
-    document.getElementById("selectAllHearing").addEventListener("click", () => { setAllSelected("hearingFilter", true); applyFilters(); });
-    document.getElementById("clearHearing").addEventListener("click", () => { setAllSelected("hearingFilter", true); applyFilters(); });
     document.getElementById("selectAllMunicipalities").addEventListener("click", () => { setAllSelected("municipalityFilter", true); applyFilters(); updateMunicipalityMaskAndZoom({ zoom:false }); });
     document.getElementById("clearMunicipalities").addEventListener("click", () => { setAllSelected("municipalityFilter", false); applyFilters(); updateMunicipalityMaskAndZoom({ zoom:false }); });
 
     window.addEventListener("resize", () => { if (map) map.updateSize(); if (table && table.columns) table.columns.adjust().draw(false); });
+  }
+
+
+  function applyEmbeddedMunicipality() {
+    if (!EMBEDDED_MUNICIPALITY) return;
+    document.body.classList.add("municipality-embedded");
+    const note = document.getElementById("municipalEmbedNote");
+    if (note) note.innerHTML = `<b>Kommunal visning:</b> Viser kun lokalplaner i høring i ${escapeHtml(EMBEDDED_MUNICIPALITY)} Kommune.`;
+    const select = document.getElementById("municipalityFilter");
+    if (select) {
+      Array.from(select.options).forEach(option => {
+        option.selected = normalize(option.value) === normalize(EMBEDDED_MUNICIPALITY);
+      });
+      updateMunicipalityDropdownLabel();
+    }
   }
 
 
@@ -1430,22 +1785,24 @@
     try {
       const geojson = await wfsDataPromise;
       allItems = geojson.features.filter(f => f && f.geometry).map(enrichFeature);
-      if (!allItems.length) throw new Error("Der blev ikke fundet lokalplanforslag i temaet.");
+      if (!allItems.length) throw new Error("Der blev ikke fundet lokalplaner i temaet.");
 
       // Vis tabel, kort og nøgletal så snart WFS-data er klar.
       // Kommunevælgeren fyldes bagefter, når kommunegrænserne er klar.
-      setStatus(`${formatNumberDa(allItems.length)} lokalplanforslag er indl\u00e6st.`, "ok");
+      setStatus(`${formatNumberDa(allItems.length)} lokalplaner er indl\u00e6st.`, "ok");
       applyFilters({ zoom:false });
       resetMapView();
 
       await municipalityDataPromise;
       populateFilterOptions();
-      updateMunicipalityMaskAndZoom({ zoom:false });
+      applyEmbeddedMunicipality();
+      applyFilters({ zoom: Boolean(EMBEDDED_MUNICIPALITY) });
+      updateMunicipalityMaskAndZoom({ zoom: Boolean(EMBEDDED_MUNICIPALITY) });
     } catch(e) {
       console.error(e);
-      setStatus("Planforslagene kunne ikke vises. Pr\u00f8v at genindl\u00e6se siden eller \u00e5bne filen i en moderne browser.", "error");
+      setStatus("Lokalplanerne kunne ikke vises. Pr\u00f8v at genindl\u00e6se siden eller \u00e5bne filen i en moderne browser.", "error");
       const legend = document.getElementById("legend");
-      if (legend) legend.innerHTML = `<div class="legend-header-row"><b>Signatur</b></div><div class="legend-body"><img src="${LEGEND_URL}&_=${Date.now()}" alt="WMS-signatur for lokalplanforslag" /></div>`;
+      if (legend) legend.innerHTML = `<div class="legend-header-row"><b>Signatur</b></div><div class="legend-body"><img src="${LEGEND_URL}&_=${Date.now()}" alt="WMS-signatur for lokalplaner" /></div>`;
     }
   });
 })();
