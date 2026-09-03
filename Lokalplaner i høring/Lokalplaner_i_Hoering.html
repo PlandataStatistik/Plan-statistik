@@ -240,9 +240,22 @@
     .legend-toggle { border:1px solid var(--kant); border-radius:8px; background:var(--lysebrun); color:var(--sort); padding:4px 7px; font-size:12px; line-height:1; }
     .legend.collapsed { max-width:210px; }
     .legend.collapsed .legend-body { display:none; }
-    .ol-popup { position:absolute; background:white; box-shadow:0 2px 12px rgba(0,0,0,0.24); padding:12px; border-radius:12px; border:1px solid var(--kant); bottom:12px; left:-50px; min-width:260px; max-width:360px; font:13px/1.4 "Segoe UI", Arial, sans-serif; }
-    .ol-popup:after, .ol-popup:before { top:100%; border:solid transparent; content:" "; height:0; width:0; position:absolute; pointer-events:none; }
-    .ol-popup:after { border-top-color:white; border-width:10px; left:48px; margin-left:-10px; }
+    .ol-popup {
+      position:absolute;
+      top:12px;
+      right:12px;
+      background:white;
+      box-shadow:0 2px 12px rgba(0,0,0,0.24);
+      padding:12px;
+      border-radius:12px;
+      border:1px solid var(--kant);
+      min-width:260px;
+      max-width:360px;
+      font:13px/1.4 "Segoe UI", Arial, sans-serif;
+      z-index:60;
+      display:none;
+    }
+    .ol-popup.visible { display:block; }
     .ol-popup-closer { text-decoration:none; position:absolute; top:6px; right:8px; color:var(--primaer); font-weight:700; }
     .ol-popup-closer:after { content:"x"; }
     .popup-zoom-plan { margin-top:10px; background:var(--primaer); color:white; border-radius:8px; padding:7px 9px; font-size:12px; }
@@ -305,6 +318,18 @@
       font-size:12px;
       font-weight:750;
       border:0;
+    }
+    /* .hearing-cta needs to win over the generic beige row styling above —
+       reapply its green/white look at higher specificity so it isn't
+       flattened just because it now sits inside .secondary-link-row. */
+    .secondary-link-row a.hearing-cta,
+    .secondary-link-row .hearing-cta {
+      background:var(--primaer);
+      color:white;
+    }
+    .secondary-link-row a.hearing-cta.disabled,
+    .secondary-link-row .hearing-cta.disabled {
+      background:#777;
     }
     .table-cta { white-space:nowrap; }
     .learn-more-localplan { font-size:12px; display:inline-block; margin-top:6px; }
@@ -630,7 +655,6 @@
   let municipalityGeojson = null;
   let municipalityFeaturesByName = new Map();
   let featureByKey = new Map();
-  let popupOverlay;
   let popupContent;
   let popupCloser;
   let legendElement;
@@ -961,7 +985,7 @@
     map.on("singleclick", function(evt) {
       const feature = map.forEachFeatureAtPixel(evt.pixel, f => f && f.get("item") ? f : null, { hitTolerance: 4 });
       if (!feature) {
-        popupOverlay.setPosition(undefined);
+        hidePopup();
         return;
       }
       showPopupForFeature(feature, { center:true });
@@ -976,29 +1000,44 @@
   }
 
 
+  function fitExtentLowerLeft(extent, opts = {}) {
+    // Padding eats space from each side before view.fit() centers the extent
+    // in what's left. Eating the top half + right half of the view leaves
+    // only the bottom-left quadrant as the fit target, so the feature lands
+    // there instead of dead center.
+    const size = map.getSize();
+    const padding = size
+      ? [size[1] * 0.5 + 20, size[0] * 0.5 + 20, 30, 30]
+      : [100, 100, 30, 30];
+    map.getView().fit(extent, Object.assign({ padding, maxZoom:15, duration:220 }, opts));
+  }
+
+  function showPopup(item) {
+    popupContent.innerHTML = makePopup(item);
+    document.querySelector(".ol-popup").classList.add("visible");
+  }
+
+  function hidePopup() {
+    const el = document.querySelector(".ol-popup");
+    if (el) el.classList.remove("visible");
+  }
+
   function showPopupForFeature(feature, options = {}) {
     if (!feature) return;
     const item = feature.get("item");
     if (!item) return;
     try {
-      const geometry = feature.getGeometry();
-      const extent = geometry.getExtent();
-      const coordinate = ol.extent.getCenter(extent);
+      const extent = feature.getGeometry().getExtent();
       if (options.center !== false) {
-        map.getView().fit(extent, { padding:[100,100,170,100], maxZoom:15, duration:220 });
-        setTimeout(() => {
-          popupContent.innerHTML = makePopup(item);
-          popupOverlay.setPosition(coordinate);
-        }, 230);
+        fitExtentLowerLeft(extent);
+        setTimeout(() => showPopup(item), 230);
       } else {
-        popupContent.innerHTML = makePopup(item);
-        popupOverlay.setPosition(coordinate);
+        showPopup(item);
       }
       highlightTableRow(item.key);
     } catch(e) {
       console.warn(e);
-      popupContent.innerHTML = makePopup(item);
-      popupOverlay.setPosition(ol.extent.getCenter(feature.getGeometry().getExtent()));
+      showPopup(item);
       highlightTableRow(item.key);
     }
   }
@@ -1012,7 +1051,10 @@
     const content = document.createElement("div");
     container.appendChild(closer);
     container.appendChild(content);
-    document.body.appendChild(container);
+    // Appended into the map div and positioned by CSS (top:12px; right:12px)
+    // instead of an ol.Overlay bound to a map coordinate — that's what keeps
+    // it pinned to a screen corner rather than tracking the clicked feature.
+    document.getElementById("map").appendChild(container);
     popupContent = content;
     content.addEventListener("click", function(event) {
       const btn = event.target.closest("[data-zoom-plan-key]");
@@ -1021,10 +1063,8 @@
       zoomToFeatureKey(btn.getAttribute("data-zoom-plan-key"));
     });
     popupCloser = closer;
-    popupOverlay = new ol.Overlay({ element: container, positioning:"bottom-center", offset:[0,-12], autoPan: { animation: { duration: 250 }, margin: 28 } });
-    map.addOverlay(popupOverlay);
     closer.onclick = function() {
-      popupOverlay.setPosition(undefined);
+      hidePopup();
       closer.blur();
       return false;
     };
@@ -1200,7 +1240,9 @@
         <b>Kommune:</b> ${escapeHtml(item.municipality || "Ikke oplyst")}<br>
         <b>Høringsfrist:</b> ${hearingDeadlineHtml(item)}<br>
         <b>Anvendelse:</b> ${escapeHtml(item.application || "Ikke oplyst")}
-        ${hearingResponseLink(item)}
+        <div class="secondary-link-row">
+          ${hearingResponseLink(item)}
+        </div>
         <div class="secondary-link-row">
           ${secondaryPlanLink || ""}
         </div>
@@ -1256,13 +1298,10 @@
     const feature = featureByKey.get(key);
     if (!feature) return;
     try {
-      const geometry = feature.getGeometry();
-      const extent = geometry.getExtent();
-      map.getView().fit(extent, { padding:[100,100,170,100], maxZoom:15, duration:250 });
+      const extent = feature.getGeometry().getExtent();
+      fitExtentLowerLeft(extent, { duration:250 });
       const item = feature.get("item");
-      const coordinate = ol.extent.getCenter(extent);
-      popupContent.innerHTML = makePopup(item);
-      setTimeout(() => popupOverlay.setPosition(coordinate), 280);
+      setTimeout(() => showPopup(item), 280);
     } catch(e) { console.warn(e); }
   }
 
