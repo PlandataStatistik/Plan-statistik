@@ -14,7 +14,7 @@ const MUNICIPALITY_HEARING_LINKS = {
   "Brønderslev": { url: "https://bronderslev.viewer.dkplan.niras.dk/plan/53#/16151", label: "Høringer - Brønderslev Kommune" },
   "Dragør": { url: "https://www.dragoer.dk/hoeringerafgoerelser", label: "Høringer - Dragør Kommune" },
   "Egedal": { url: "https://www.egedalkommune.dk/demokrati-og-indflydelse/bliv-hoert-og-faa-indflydelse/hoeringer-og-afgoerelser?category=KOL&area=&type=HOER&sort=ASC", label: "Høringer - Egedal Kommune" },
-  "Esbjerg": { url: "https://lokalplaner.esbjerg.dk/lokalplaner-i-hoering/", label: "Høringer - Esbjerg Kommune" },
+  "Esbjerg": { url: "https://www.esbjerg.dk/politik-og-demokrati/hoeringsportal?area=&type=&category=LKPLAN&sort=ASC", label: "Høringer - Esbjerg Kommune" },
   "Faaborg-Midtfyn": { url: "https://www.fmk.dk/politik/hoeringer-og-afgoerelser/", label: "Høringer - Faaborg-Midtfyn Kommune" },
   "Fanø": { url: "https://fanoe.dk/borger/planlaegning/lokalplaner", label: "Høringer - Fanø Kommune" },
   "Favrskov": { url: "https://favrskov.dk/demokrati/hoeringer-og-afgoerelser", label: "Høringer - Favrskov Kommune" },
