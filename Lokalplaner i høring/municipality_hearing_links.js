@@ -62,7 +62,7 @@ const MUNICIPALITY_HEARING_LINKS = {
   "Mariagerfjord": { url: "https://www.mariagerfjord.dk/demokrati/indflydelse/annoncer-og-hoeringer", label: "Høringer - Mariagerfjord Kommune" },
   "Middelfart": { url: "https://middelfart.dk/hoeringer", label: "Høringer - Middelfart Kommune" },
   "Morsø": { url: "https://morsoe.viewer.dkplan.niras.dk/plan/20#/5307", label: "Høringer - Morsø Kommune" },
-  "Norddjurs": { url: "https://norddjurs.dk/politik-og-indflydelse/aktuelle-offentliggoerelser-og-hoeringer/hoeringer-af-lokalplaner-og-kommuneplantillaeg", label: "Høringer - Norddjurs Kommune" },
+  "Norddjurs": { url: "https://norddjurs.dk/politik-og-indflydelse/aktuelle-offentliggoerelser-og-hoeringer/hoeringer-lokalplaner-og-kommuneplantillaeg", label: "Høringer - Norddjurs Kommune" },
   "Nordfyns": { url: "https://www.nordfynskommune.dk/hoeringer-og-afgoerelser/", label: "Høringer - Nordfyns Kommune" },
   "Nyborg": { url: "https://www.nyborg.dk/da/demokrati-og-indflydelse/faa-indflydelse/hoeringer-og-afgoerelser/", label: "Høringer - Nyborg Kommune" },
   "Næstved": { url: "https://www.naestved.dk/hoeringer?tag=10c8e8ca0eb141bd985d45d32c21b3e7", label: "Høringer - Næstved Kommune" },
